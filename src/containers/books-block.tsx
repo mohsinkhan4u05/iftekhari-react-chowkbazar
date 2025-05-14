@@ -1,6 +1,6 @@
 import React from "react";
 import SectionHeader from "@components/common/section-header";
-import BookCard from "@components/product/BOOK-card";
+import BookCard from "@components/product/book-card";
 import ProductFeedLoader from "@components/ui/loaders/product-feed-loader";
 import { Book } from "@framework/types";
 import Alert from "@components/ui/alert";
