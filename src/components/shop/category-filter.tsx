@@ -57,8 +57,8 @@ export const CategoryFilter = () => {
             key={item.id}
             label={item.name}
             name={item.name.toLowerCase()}
-            checked={formState.includes(item.slug)}
-            value={item.slug}
+            checked={formState.includes(item.name)}
+            value={item.name}
             onChange={handleItemClick}
           />
         ))}

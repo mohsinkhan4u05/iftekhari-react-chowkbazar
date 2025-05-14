@@ -1,63 +1,63 @@
 {
   "data": [
     {
-      "id": 1,
-      "name": "PURSES",
-      "slug": "purses",
+      "id": 13,
+      "name": "Tasawwuf",
+      "slug": "tasawwuf",
       "productCount": 20,
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/ancient/purses.jpg",
-        "original": "/assets/images/category/ancient/purses.jpg"
+        "thumbnail": "/assets/images/category/ancient/tasawwuf.png",
+        "original": "/assets/images/category/ancient/tasawwuf.png"
       }
     },
     {
-      "id": 2,
-      "name": "SHOES",
-      "slug": "shoes",
-      "productCount": 20,
+      "id": 14,
+      "name": "Wahdat-Ul-Wajood",
+      "slug": "Wahdat-Ul-Wajood",
+      "productCount": 6,
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/ancient/shoes.jpg",
-        "original": "/assets/images/category/ancient/shoes.jpg"
+        "thumbnail": "/assets/images/category/ancient/wehdat.png",
+        "original": "/assets/images/category/ancient/wehdat.png"
       }
     },
     {
       "id": 3,
-      "name": "ACCESSORIES",
-      "slug": "accessories",
+      "name": "Hadees",
+      "slug": "hadees",
       "productCount": 20,
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/ancient/accessories.jpg",
-        "original": "/assets/images/category/ancient/accessories.jpg"
+        "thumbnail": "/assets/images/category/ancient/hadees.png",
+        "original": "/assets/images/category/ancient/hadees.png"
       }
     },
     {
-      "id": 4,
-      "name": "JEANS",
-      "slug": "jeans",
+      "id": 10,
+      "name": "Swan-e-Hayaat-Biography",
+      "slug": "Swan-e-Hayaat-Biography",
       "productCount": 20,
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/ancient/jeans.jpg",
-        "original": "/assets/images/category/ancient/jeans.jpg"
+        "thumbnail": "/assets/images/category/ancient/biography.png",
+        "original": "/assets/images/category/ancient/biography.png"
       }
     },
     {
-      "id": 5,
-      "name": "WATCHES",
-      "slug": "watches",
+      "id": 6,
+      "name": "Poetry-Kalaam",
+      "slug": "Poetry-Kalaam",
       "productCount": 20,
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/ancient/watches.jpg",
-        "original": "/assets/images/category/ancient/watches.jpg"
+        "thumbnail": "/assets/images/category/ancient/poetry.png",
+        "original": "/assets/images/category/ancient/poetry.png"
       }
     }
   ]

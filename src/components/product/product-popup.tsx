@@ -11,7 +11,15 @@ import { generateCartItem } from "@utils/generate-cart-item";
 import usePrice from "@framework/product/use-price";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
-
+import RatingDisplay from "@components/common/rating-display";
+import {
+  IoLogoInstagram,
+  IoLogoTwitter,
+  IoLogoFacebook,
+  IoLogoYoutube,
+  IoClose,
+} from "react-icons/io5";
+import { FaEye } from "react-icons/fa";
 export default function ProductPopup() {
   const { t } = useTranslation("common");
   const {
@@ -31,8 +39,10 @@ export default function ProductPopup() {
     currencyCode: "USD",
   });
   const variations = getVariations(data.variations);
-  const { slug, image, name, description } = data;
+  const { slug, image, name, description, imagePath, bookId } = data;
 
+  console.log(data, "data");
+  const placeholderImage = `http://admin.silsilaeiftekhari.in/${imagePath}`;
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
       Object.keys(variations).every((variation) =>
@@ -50,14 +60,20 @@ export default function ProductPopup() {
     }, 600);
     const item = generateCartItem(data!, attributes);
     addItemToCart(item, quantity);
-    console.log(item, "item");
   }
 
   function navigateToProductPage() {
     closeModal();
-    router.push(`${ROUTES.PRODUCT}/${slug}`, undefined, {
+    router.push(`${ROUTES.PRODUCT}/${name}`, undefined, {
       locale: router.locale,
     });
+  }
+
+  function navigateToBookPage() {
+    closeModal();
+    router.push(
+      `/books/${name.toLowerCase().replace(/\s+/g, "-")}/${data?.id}`
+    );
   }
 
   function handleAttribute(attribute: any) {
@@ -81,7 +97,7 @@ export default function ProductPopup() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={
-              image?.original ??
+              placeholderImage ??
               "/assets/placeholder/products/product-thumbnail.svg"
             }
             alt={name}
@@ -93,18 +109,49 @@ export default function ProductPopup() {
           <div className="pb-5">
             <div
               className="mb-2 md:mb-2.5 block -mt-1.5"
-              onClick={navigateToProductPage}
+              onClick={navigateToBookPage}
               role="button"
             >
               <h2 className="text-heading text-lg md:text-xl lg:text-2xl font-semibold hover:text-black">
                 {name}
               </h2>
             </div>
-            <p className="text-sm leading-6 md:text-body md:leading-7">
-              {description}
-            </p>
 
-            <div className="flex items-center mt-3">
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>author : </b>
+              {data?.author ?? "Not Available"}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>translator : </b>
+              {data?.translator ?? "Not Available"}
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>rating : </b>
+              <RatingDisplay rating={3.5} />
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>views : </b>
+              {data?.views ?? 0}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>tags : </b>
+              {data?.tags ?? 0}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>pages : </b>
+              {data?.totalPages ?? 0}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>category : </b>
+              {data?.category ?? "Not Available"}
+            </div>
+            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
+              <b style={{ paddingRight: 16 }}>language : </b>
+              {data?.language ?? "Not Available"}
+            </div>
+
+            {/* <div className="flex items-center mt-3">
               <div className="text-heading font-semibold text-base md:text-xl lg:text-2xl">
                 {price}
               </div>
@@ -113,7 +160,7 @@ export default function ProductPopup() {
                   {basePrice}
                 </del>
               )}
-            </div>
+            </div>  */}
           </div>
 
           {Object.keys(variations).map((variation) => {
@@ -130,15 +177,15 @@ export default function ProductPopup() {
 
           <div className="pt-2 md:pt-4">
             <div className="flex items-center justify-between mb-4 gap-x-3 sm:gap-x-4">
-              <Counter
+              {/* <Counter
                 quantity={quantity}
                 onIncrement={() => setQuantity((prev) => prev + 1)}
                 onDecrement={() =>
                   setQuantity((prev) => (prev !== 1 ? prev - 1 : 1))
                 }
                 disableDecrement={quantity === 1}
-              />
-              <Button
+              /> */}
+              {/* <Button
                 onClick={addToCart}
                 variant="flat"
                 className={`w-full h-11 md:h-12 px-1.5 ${
@@ -148,7 +195,7 @@ export default function ProductPopup() {
                 loading={addToCartLoader}
               >
                 {t("text-add-to-cart")}
-              </Button>
+              </Button> */}
             </div>
 
             {viewCartBtn && (
@@ -161,7 +208,7 @@ export default function ProductPopup() {
             )}
 
             <Button
-              onClick={navigateToProductPage}
+              onClick={navigateToBookPage}
               variant="flat"
               className="w-full h-11 md:h-12"
             >

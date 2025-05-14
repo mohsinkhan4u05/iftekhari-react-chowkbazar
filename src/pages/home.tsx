@@ -5,16 +5,15 @@ import Subscription from "@components/common/subscription";
 import ProductsFeatured from "@containers/products-featured";
 import BannerBlockAncient from "@containers/banner-block-ancient";
 import BrandBlock from "@containers/brand-block";
-// import Divider from '@components/ui/divider';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
 import { ancientHeroBanner } from "@framework/static/banner";
-import NewArrivalsProductFeed from "@components/product/feeds/new-arrivals-product-feed";
+import NewArrivalsBookFeed from "@components/product/feeds/new-arrivals-book-feed";
 import PopularProductFeed from "@components/product/feeds/popular-product-feed";
 import TestimonialCarousel from "@containers/testimonial-carousel";
 import Instagram from "@components/common/instagram";
 import DownloadApps from "@components/common/download-apps";
-import CategoryBlock from "@containers/category-block";
+import CategoryBlockBook from "@containers/category-block-book";
 import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
 import HireDesignerAncient from "@containers/buy-designer-ancient";
 
@@ -32,7 +31,7 @@ export default function Home() {
       />
 
       <Container>
-        <CategoryBlock
+        <CategoryBlockBook
           type="rounded"
           sectionHeading="Browse Categories"
           roundedItemCount={5}
@@ -43,13 +42,40 @@ export default function Home() {
           className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
         />
 
-        <NewArrivalsProductFeed
+        <NewArrivalsBookFeed
           demoVariant="ancient"
           hideProductDescription={true}
           showCategory={true}
           showRating={true}
           disableBorderRadius={true}
           className={sectionCommonStyle}
+          type={"popular"}
+          limit={5}
+          sectionHeading={"Popular Books"}
+        />
+
+        <NewArrivalsBookFeed
+          demoVariant="ancient"
+          hideProductDescription={true}
+          showCategory={true}
+          showRating={true}
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          type={"editor-choice"}
+          limit={5}
+          sectionHeading={"Editors Choice"}
+        />
+
+        <NewArrivalsBookFeed
+          demoVariant="ancient"
+          hideProductDescription={true}
+          showCategory={true}
+          showRating={true}
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          type={"new-arrival"}
+          limit={5}
+          sectionHeading={"New Arrivals"}
         />
 
         <BannerBlockAncient

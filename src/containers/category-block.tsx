@@ -121,7 +121,8 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
                   <Card
                     imgSize={imgSize}
                     item={category}
-                    href={`${ROUTES.CATEGORY}/${category.slug}`}
+                    //href={`${ROUTES.CATEGORY}/${category.slug}`}
+                    href={`${ROUTES.BOOK_CATEGORY}/${category.name}/${category.id}`}
                     variant={type}
                     effectActive={true}
                     size={type === "rounded" ? "medium" : "small"}

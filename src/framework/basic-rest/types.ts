@@ -1,4 +1,4 @@
-import { QueryKey } from '@tanstack/react-query';
+import { QueryKey } from "@tanstack/react-query";
 
 export type CollectionsQueryOptionsType = {
   text?: string;
@@ -12,7 +12,7 @@ export type CategoriesQueryOptionsType = {
   category?: string;
   status?: string;
   limit?: number;
-  demoVariant?: 'ancient';
+  demoVariant?: "ancient";
 };
 export type ProductsQueryOptionsType = {
   type: string;
@@ -26,7 +26,8 @@ export type QueryOptionsType = {
   category?: string;
   status?: string;
   limit?: number;
-  demoVariant?: 'ancient';
+  demoVariant?: "ancient";
+  type?: string;
 };
 
 export type ShopsQueryOptionsType = {
@@ -81,6 +82,37 @@ export type Tag = {
 export type Product = {
   id: number | string;
   name: string;
+  slug: string;
+  price: number;
+  quantity: number;
+  sale_price?: number;
+  image: Attachment;
+  sku?: string;
+  gallery?: Attachment[];
+  category?: Category;
+  tag?: Tag[];
+  tags?: Tag[];
+  meta?: any[];
+  description?: string;
+  variations?: object;
+  [key: string]: unknown;
+  isNewArrival?: boolean;
+};
+export type Book = {
+  id: number | string;
+  name: string;
+  author: string;
+  imagePath: string;
+  views: number;
+  rating: number | null;
+  bookId: string;
+  language: string;
+  categoryId: number;
+  totalPages: number;
+  addedBy: string;
+  updatedBy: string;
+  published: boolean;
+  translator: string | null;
   slug: string;
   price: number;
   quantity: number;

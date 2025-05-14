@@ -41,9 +41,9 @@ const Header: React.FC = () => {
             className="hidden lg:flex ltr:md:ml-6 rtl:md:mr-6 ltr:xl:ml-10 rtl:xl:mr-10"
           />
 
-          <div className="flex-shrink-0 ltr:ml-auto rtl:mr-auto ltr:lg:mr-5 rtl:lg:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10">
+          {/* <div className="flex-shrink-0 ltr:ml-auto rtl:mr-auto ltr:lg:mr-5 rtl:lg:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10">
             <LanguageSwitcher />
-          </div>
+          </div> */}
           <div className="items-center justify-end flex-shrink-0 hidden lg:flex gap-x-6 lg:gap-x-5 xl:gap-x-8 2xl:gap-x-10 ltr:ml-auto rtl:mr-auto">
             <button
               className="relative flex items-center justify-center flex-shrink-0 h-auto transform focus:outline-none"
@@ -52,7 +52,7 @@ const Header: React.FC = () => {
             >
               <SearchIcon />
             </button>
-            <div className="-mt-0.5 flex-shrink-0">
+            {/* <div className="-mt-0.5 flex-shrink-0">
               <AuthMenu
                 isAuthorized={isAuthorized}
                 href={ROUTES.ACCOUNT}
@@ -67,8 +67,8 @@ const Header: React.FC = () => {
               >
                 {t("text-account")}
               </AuthMenu>
-            </div>
-            <CartButton />
+            </div> */}
+            {/* <CartButton /> */}
           </div>
         </div>
       </div>

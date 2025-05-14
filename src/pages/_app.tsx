@@ -5,11 +5,17 @@ import { ManagedUIContext } from "@contexts/ui.context";
 import ManagedModal from "@components/common/modal/managed-modal";
 import ManagedDrawer from "@components/common/drawer/managed-drawer";
 import { useEffect, useRef } from "react";
-import { QueryClient, QueryClientProvider, HydrationBoundary } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  HydrationBoundary,
+} from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 // import { ReactQueryDevtools } from "@tanstack/react-query/devtools";
 import { appWithTranslation } from "next-i18next";
 import { DefaultSeo } from "@components/common/default-seo";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Load Open Sans and satisfy typeface font
 import "@fontsource/open-sans";
@@ -24,6 +30,7 @@ import "@styles/custom-plugins.css";
 import "@styles/tailwind.css";
 import "@styles/rc-drawer.css";
 import { getDirection } from "@utils/get-direction";
+import { BookCountProvider } from "@contexts/book/book-count.context";
 
 function handleExitComplete() {
   if (typeof window !== "undefined") {
@@ -56,7 +63,9 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
           <ManagedUIContext>
             <Layout pageProps={pageProps}>
               <DefaultSeo />
-              <Component {...pageProps} key={router.route} />
+              <BookCountProvider>
+                <Component {...pageProps} key={router.route} />
+              </BookCountProvider>
               <ToastContainer toastClassName="!text-white" />
             </Layout>
             <ManagedModal />

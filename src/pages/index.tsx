@@ -1,78 +1,180 @@
-import BannerCard from "@components/common/banner-card";
+import HeroSlider from "@containers/hero-slider";
 import Container from "@components/ui/container";
-import BrandGridBlock from "@containers/brand-grid-block";
-import CategoryBlock from "@containers/category-block";
 import Layout from "@components/layout/layout";
-import BannerWithProducts from "@containers/banner-with-products";
-import BannerBlock from "@containers/banner-block";
-import Divider from "@components/ui/divider";
-import DownloadApps from "@components/common/download-apps";
-import Support from "@components/common/support";
-import Instagram from "@components/common/instagram";
-import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
-import ProductsFeatured from "@containers/products-featured";
-import BannerSliderBlock from "@containers/banner-slider-block";
-import ExclusiveBlock from "@containers/exclusive-block";
 import Subscription from "@components/common/subscription";
-import NewArrivalsProductFeed from "@components/product/feeds/new-arrivals-product-feed";
-import { homeThreeBanner as banner } from "@framework/static/banner";
-import { homeThreeMasonryBanner as masonryBanner } from "@framework/static/banner";
+import ProductsFeatured from "@containers/products-featured";
+import BannerBlockAncient from "@containers/banner-block-ancient";
+import BrandBlock from "@containers/brand-block";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { ROUTES } from "@utils/routes";
 import { GetStaticProps } from "next";
+import { ancientHeroBanner } from "@framework/static/banner";
+import NewArrivalsBookFeed from "@components/product/feeds/new-arrivals-book-feed";
+import PopularProductFeed from "@components/product/feeds/popular-product-feed";
+import TestimonialCarousel from "@containers/testimonial-carousel";
+import Instagram from "@components/common/instagram";
+import DownloadApps from "@components/common/download-apps";
+import CategoryBlockBook from "@containers/category-block-book";
+import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
+import HireDesignerAncient from "@containers/buy-designer-ancient";
 
 export default function Home() {
+  const sectionCommonStyle = "mb-7 md:mb-10 lg:mb-12 xl:mb-14 2xl:mb-[75px]";
+
   return (
     <>
-      <BannerBlock data={masonryBanner} />
+      {/* <HeroSlider
+        data={ancientHeroBanner}
+        variantRounded="default"
+        variant="fullWidth"
+        className={sectionCommonStyle}
+        buttonGroupClassName="hidden"
+      /> */}
+
       <Container>
-        <ProductsFlashSaleBlock date={"2025-12-01T01:02:03"} />
-      </Container>
-      <BannerSliderBlock />
-      <Container>
-        <CategoryBlock
-          sectionHeading="text-shop-by-category"
+        <CategoryBlockBook
           type="rounded"
+          sectionHeading="Browse Categories"
+          roundedItemCount={5}
+          roundedSpaceBetween={8}
+          imgSize="large"
+          demoVariant="ancient"
+          disableBorderRadius={true}
+          className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
         />
-        <ProductsFeatured
+
+        <NewArrivalsBookFeed
+          demoVariant="ancient"
+          hideProductDescription={true}
+          showCategory={true}
+          showRating={true}
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          type={"popular"}
+          limit={10}
+          sectionHeading={"Popular Books"}
+        />
+
+        <NewArrivalsBookFeed
+          demoVariant="ancient"
+          hideProductDescription={true}
+          showCategory={true}
+          showRating={true}
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          type={"editor-choice"}
+          limit={10}
+          sectionHeading={"Editors Choice"}
+        />
+
+        <NewArrivalsBookFeed
+          demoVariant="ancient"
+          hideProductDescription={true}
+          showCategory={true}
+          showRating={true}
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          type={"new-arrival"}
+          limit={10}
+          sectionHeading={"New Arrivals"}
+        />
+
+        {/* <BannerBlockAncient
+          disableBorderRadius={true}
+          largeFirst={true}
+          dataVariant="two"
+          demoVariant="ancient"
+          className={sectionCommonStyle}
+        /> */}
+
+        {/* <ProductsFeatured
           sectionHeading="text-featured-products"
-          limit={5}
+          limit={4}
+          variant="modern"
+          hideBanner={true}
+          demoVariant="ancient"
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
         />
-        <BannerCard
-          key={`banner--key${banner[0].id}`}
-          banner={banner[0]}
-          href={`${ROUTES.COLLECTIONS}/${banner[0].slug}`}
-          className="mb-12 lg:mb-14 xl:mb-16 pb-0.5 lg:pb-1 xl:pb-0"
+
+        <BannerBlockAncient
+          // className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
+          disableBorderRadius={true}
+          demoVariant="ancient"
+          spaceBetween={10}
+          className={sectionCommonStyle}
         />
-        <BrandGridBlock sectionHeading="text-top-brands" />
-        <BannerCard
-          key={`banner--key${banner[1].id}`}
-          banner={banner[1]}
-          href={`${ROUTES.COLLECTIONS}/${banner[1].slug}`}
-          className="mb-12 lg:mb-14 xl:mb-16 pb-0.5 lg:pb-1 xl:pb-0"
+
+        <BrandBlock
+          disableBorderRadius={true}
+          sectionHeading="text-top-brands"
+          showName={false}
+          demoVariant="ancient"
+          className={"mb-[14px] md:mb-6 lg:mb-7 xl:mb-8 2xl:mb-[45px]"}
         />
-        <BannerWithProducts
-          sectionHeading="text-on-selling-products"
-          categorySlug="/search"
-        />
-        <ExclusiveBlock />
-        <NewArrivalsProductFeed />
-        <DownloadApps />
-        <Support />
-        <Instagram />
-        <Subscription className="px-5 py-12 bg-opacity-0 sm:px-16 xl:px-0 md:py-14 xl:py-16" />
+
+        <ProductsFlashSaleBlock
+          itemVariant="listSmall"
+          disableSectionBorder={true}
+          disableSectionPadding={true}
+          hideCountdown={true}
+          limit={8}
+          TwoXlCols={4}
+          demoVariant="ancient"
+          disableBorderRadius={true}
+          className={sectionCommonStyle}
+          bgGray={true}
+        /> */}
       </Container>
-      <Divider className="mb-0" />
+
+      {/* <HireDesignerAncient /> */}
+
+      {/* <Container>
+        <PopularProductFeed
+          disableBorderRadius={true}
+          demoVariant="ancient"
+          className={sectionCommonStyle}
+        />
+
+        <DownloadApps
+          disableBorderRadius={true}
+          className={`bg-app-pattern ${sectionCommonStyle}`}
+          variant="ancient"
+        />
+
+        <TestimonialCarousel
+          sectionHeading="text-testimonial"
+          type="list"
+          className="relative mb-12 md:mb-14 xl:mb-16"
+          disableBoarderRadius={true}
+          reduceCardSpacing={true}
+          demoVariant="ancient"
+        />
+
+        <Instagram
+          disableContainerBorderRadius={true}
+          className={`mb-11 lg:mb-12 xl:mb-14 2xl:mb-[75px] md:gap-[7px]`}
+        />
+
+        <Subscription
+          disableBorderRadius={true}
+          className="bg-opacity-0 px-5 sm:px-16 xl:px-0 mb-12 md:mb-14 xl:mb-16 !py-0 !md:py-0 !lg:py-0"
+        />
+      </Container> */}
     </>
   );
 }
 
 Home.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getStaticProps: GetStaticProps = async ({ locale }: any) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale!, ["common", "forms", "menu", "footer"])),
+      ...(await serverSideTranslations(locale!, [
+        "common",
+        "forms",
+        "menu",
+        "footer",
+      ])),
     },
   };
 };

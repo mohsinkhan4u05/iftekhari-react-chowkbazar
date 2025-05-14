@@ -2,10 +2,10 @@
   "data": [
     {
       "id": 1,
-      "name": "Woman",
-      "slug": "woman",
-      "productCount": 20,
-      "icon": "/assets/images/category/icons/woman.png",
+      "name": "Tasawwuf",
+      "slug": "Tasawwuf",
+      "productCount": 96,
+      "icon": "/assets/images/category/icons/tasawwuf.png",
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],
       "image": {
         "id": 1,
@@ -14,16 +14,16 @@
       }
     },
     {
-      "id": 2,
-      "name": "Man",
-      "slug": "man",
+      "id": 3,
+      "name": "Hadees",
+      "slug": "hadees",
       "productCount": 20,
-      "icon": "/assets/images/category/icons/man.png",
+      "icon": "/assets/images/category/icons/hadees.png",
       "tags": ["shovia", "fusion", "elegance", "blaze"],
       "image": {
         "id": 1,
-        "thumbnail": "/assets/images/category/man.jpg",
-        "original": "/assets/images/category/man.jpg"
+        "thumbnail": "/assets/images/category/hadees.png",
+        "original": "/assets/images/category/hadees.png"
       }
     },
     {
@@ -67,8 +67,8 @@
     },
     {
       "id": 6,
-      "name": "Sunglass",
-      "slug": "sunglass",
+      "name": "Hadees",
+      "slug": "hadees",
       "productCount": 20,
       "icon": "/assets/images/category/icons/sunglass.png",
       "tags": ["shovia", "fusion", "elegance", "fashadil", "blaze"],

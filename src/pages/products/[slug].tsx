@@ -8,33 +8,33 @@ import Breadcrumb from "@components/common/breadcrumb";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
 
-export default function ProductPage() {
-	return (
-		<>
-			<Divider className="mb-0" />
-			<Container>
-				<div className="pt-8">
-					<Breadcrumb />
-				</div>
-				<ProductSingleDetails />
-				<RelatedProducts sectionHeading="text-related-products" />
-				<Subscription />
-			</Container>
-		</>
-	);
+export default function BookPage() {
+  return (
+    <>
+      <Divider className="mb-0" />
+      <Container>
+        <div className="pt-8">
+          <Breadcrumb />
+        </div>
+        <ProductSingleDetails />
+        <RelatedProducts sectionHeading="text-related-products" />
+        <Subscription />
+      </Container>
+    </>
+  );
 }
 
-ProductPage.Layout = Layout;
+BookPage.Layout = Layout;
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-	return {
-		props: {
-			...(await serverSideTranslations(locale!, [
-				"common",
-				"forms",
-				"menu",
-				"footer",
-			])),
-		},
-	};
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, [
+        "common",
+        "forms",
+        "menu",
+        "footer",
+      ])),
+    },
+  };
 };
