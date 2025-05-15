@@ -58,7 +58,7 @@ const BookCard: FC<BookProps> = ({
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
   //const placeholderImage = `/assets/placeholder/products/product-${variant}.svg`;
-  const placeholderImage = `http://admin.silsilaeiftekhari.in/${product?.imagePath}`;
+  const placeholderImage = `https://admin.silsilaeiftekhari.in/${product?.imagePath}`;
   const { price, basePrice, discount } = usePrice({
     amount: product.sale_price ? product.sale_price : product.price,
     baseAmount: product.price,
@@ -121,8 +121,7 @@ const BookCard: FC<BookProps> = ({
       >
         <Image
           loader={() => placeholderImage}
-          //     src={product?.image?.thumbnail ?? placeholderImage}
-          src={`/api/image-proxy?url=${placeholderImage}`}
+          src={product?.image?.thumbnail ?? placeholderImage}
           width={demoVariant === "ancient" ? 352 : Number(imgWidth)}
           height={demoVariant === "ancient" ? 452 : Number(imgHeight)}
           loading={imgLoading}
