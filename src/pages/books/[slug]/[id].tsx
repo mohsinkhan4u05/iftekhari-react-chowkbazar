@@ -12,6 +12,7 @@ import Head from "next/head";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const Slider = dynamic(() => import("react-slick"), {
   ssr: false,
@@ -180,13 +181,22 @@ export default function BookPage() {
                           contentStyle={{ width: "100%" }}
                           wrapperStyle={{ width: "100%" }}
                         >
-                          <img
+                          {/* <img
                             className="w-[80%] h-auto object-cover"
                             style={{ objectFit: "cover" }}
                             key={item}
                             alt={book.name + " Sufi Book"}
                             title={"Author " + book.author}
-                            src={item}
+                            // src={item}
+                            src={`/api/image-proxy?url=${item}`}
+                          /> */}
+
+                          <Image
+                            src={`/api/image-proxy?url=${item}`}
+                            className="w-[80%] h-auto object-cover"
+                            style={{ objectFit: "cover" }}
+                            key={item}
+                            alt={book.name + " Sufi Book"}
                           />
                         </TransformComponent>
                       </TransformWrapper>

@@ -6,5 +6,8 @@ module.exports = {
     defaultLocale: "en",
     localeDetection: false,
   },
+  images: {
+    domains: ["http://admin.silsilaeiftekhari.in/"],
+  },
   localePath: path.resolve("./public/locales"),
 };

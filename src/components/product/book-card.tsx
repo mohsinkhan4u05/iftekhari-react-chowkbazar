@@ -121,7 +121,8 @@ const BookCard: FC<BookProps> = ({
       >
         <Image
           loader={() => placeholderImage}
-          src={product?.image?.thumbnail ?? placeholderImage}
+          //     src={product?.image?.thumbnail ?? placeholderImage}
+          src={`/api/image-proxy?url=${placeholderImage}`}
           width={demoVariant === "ancient" ? 352 : Number(imgWidth)}
           height={demoVariant === "ancient" ? 452 : Number(imgHeight)}
           loading={imgLoading}
