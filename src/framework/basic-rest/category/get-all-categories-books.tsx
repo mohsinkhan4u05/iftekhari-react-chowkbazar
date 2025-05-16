@@ -4,8 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 
 export const fetchCategoriesBooks = async () => {
   const url = `/api/categories/list`;
-  const response = await http.get(url);
-  const categories = response.data.data; // ✅ this is the array you want
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch categories");
+  }
+
+  const response = await res.json();
+  const categories = response.data; // ✅ this is the array you want
   return {
     categories: {
       data: categories as Category[],
