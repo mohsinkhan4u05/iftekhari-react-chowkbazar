@@ -58,7 +58,7 @@ const BookCard: FC<BookProps> = ({
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
   //const placeholderImage = `/assets/placeholder/products/product-${variant}.svg`;
-  const placeholderImage = `https://admin.silsilaeiftekhari.in/${product?.imagePath}`;
+  const placeholderImage = `https://admin.silsilaeiftekhari.in/${product?.ImagePath}`;
   const { price, basePrice, discount } = usePrice({
     amount: product.sale_price ? product.sale_price : product.price,
     baseAmount: product.price,
@@ -101,7 +101,7 @@ const BookCard: FC<BookProps> = ({
       )}
       onClick={handlePopupView}
       role="button"
-      title={product?.name}
+      title={product?.Name}
     >
       <div
         className={cn(
@@ -126,7 +126,7 @@ const BookCard: FC<BookProps> = ({
           height={demoVariant === "ancient" ? 452 : Number(imgHeight)}
           loading={imgLoading}
           quality={100}
-          alt={product?.name || "Product Image"}
+          alt={product?.Name || "Product Image"}
           className={cn(
             `bg-gray-300 object-cover ${
               !disableBorderRadius && "rounded-s-md"
@@ -240,7 +240,7 @@ const BookCard: FC<BookProps> = ({
             "text-heading": !bgTransparent,
           })}
         >
-          {product?.name}
+          {product?.Name}
         </h2>
         {/* {!!(showCategory || showRating) && (
           <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row  mb-0.5 items-start">
@@ -266,9 +266,9 @@ const BookCard: FC<BookProps> = ({
             {product?.description}
           </p>
         )} */}
-        {product?.author && (
+        {product?.Author && (
           <p className="text-body text-xs lg:text-sm leading-normal xl:leading-relaxed max-w-[250px] truncate">
-            {product?.author}
+            {product?.Author}
           </p>
         )}
         <div

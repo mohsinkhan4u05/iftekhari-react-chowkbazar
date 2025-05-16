@@ -30,7 +30,7 @@ export const API_ENDPOINTS = {
   SEARCH: "/search.json",
   ORDERS: "/orders.json",
   ORDER: "/order.json",
-  BOOKS: "https://localhost:7194/api/Books/Pagination",
+  BOOKS: "http://localhost:1486/api/books/Pagination",
   CATEGORY_BOOKS: "https://localhost:7194/api/Categories",
   BOOKS_INFO: "https://localhost:7194/api/Books/info",
   BOOKS_BY_CATEGORY: "https://localhost:7194/api/Books/category",
