@@ -4,23 +4,11 @@ import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import { useQuery } from "@tanstack/react-query";
 
 export const fetchCategoriesBooks = async () => {
-  const {
-    data: { data },
-  } = await http.get(API_ENDPOINTS.CATEGORY_BOOKS);
+  const response = await http.get(API_ENDPOINTS.CATEGORY_BOOKS);
+  const categories = response.data.data; // ✅ this is the array you want
   return {
     categories: {
-      data: data as Category[],
-    },
-  };
-};
-
-const fetchMockCategories = async () => {
-  const {
-    data: { data },
-  } = await http.get(API_ENDPOINTS.CATEGORIES_ANCIENT);
-  return {
-    categories: {
-      data: data as Category[],
+      data: categories as Category[],
     },
   };
 };
@@ -28,9 +16,6 @@ const fetchMockCategories = async () => {
 export const useCategoriesBookQuery = (options: CategoriesQueryOptionsType) => {
   return useQuery<{ categories: { data: Category[] } }, Error>({
     queryKey: [API_ENDPOINTS.CATEGORY_BOOKS, options],
-    queryFn:
-      options.demoVariant === "ancient"
-        ? fetchMockCategories
-        : fetchCategoriesBooks,
+    queryFn: fetchCategoriesBooks,
   });
 };
