@@ -138,13 +138,23 @@ export default function BookPage() {
   };
 
   const fetchNewArrivalAncientBooks = async () => {
-    const { data } = await http.get(`${API_ENDPOINTS.BOOKS_INFO}/${id}`);
-    if (data && data.Images?.length > 3) {
-      setInfinite(true);
-    } else {
-      setInfinite(false);
+    try {
+      const res = await fetch(`/api/books/info/${id}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data?.Images?.length > 3) {
+          setInfinite(true);
+        } else {
+          setInfinite(false);
+        }
+        setBook(data);
+      } else {
+        console.error("Failed to fetch book info:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching book info:", error);
     }
-    setBook(data);
   };
 
   useEffect(() => {
@@ -161,19 +171,19 @@ export default function BookPage() {
           <Breadcrumb />
         </div>
         <Head>
-          <title>{book.name + " | E-BOOK"}</title>
+          <title>{book.Name + " | E-BOOK"}</title>
           <meta
             name="description"
-            content={"sufi book " + book.name + " by " + book.Author}
+            content={"sufi book " + book.Name + " by " + book.Author}
             key="desc"
           />
         </Head>
         <div>
           <Wrapper>
-            {book && book.images?.length > 0 && (
+            {book && book.Images?.length > 0 && (
               <Slider {...settings}>
                 {book &&
-                  book.images?.map((item: any) => (
+                  book.Images?.map((item: any) => (
                     <div key={item} className="w-full">
                       <TransformWrapper>
                         <TransformComponent
@@ -184,8 +194,8 @@ export default function BookPage() {
                             className="w-[80%] h-auto object-cover"
                             style={{ objectFit: "cover" }}
                             key={item}
-                            alt={book.name + " Sufi Book"}
-                            title={"Author " + book.author}
+                            alt={book.Name + " Sufi Book"}
+                            title={"Author " + book.Author}
                             src={item}
                           />
                         </TransformComponent>
