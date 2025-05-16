@@ -117,11 +117,11 @@ const CategoryBlockBook: React.FC<CategoriesBookProps> = ({
                 );
               })
             : data?.categories?.data?.map((category) => (
-                <SwiperSlide key={`category--key-${category.id}`}>
+                <SwiperSlide key={`category--key-${category.ID}`}>
                   <Card
                     imgSize={imgSize}
                     item={category}
-                    href={`${ROUTES.BOOK}?category=${category.name}`}
+                    href={`${ROUTES.BOOK}?category=${category.Name}`}
                     variant={type}
                     effectActive={true}
                     size={type === "rounded" ? "medium" : "small"}

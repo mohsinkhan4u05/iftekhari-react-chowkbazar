@@ -6,8 +6,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
-import http from "@framework/utils/http";
 import Head from "next/head";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
@@ -137,7 +135,7 @@ export default function BookPage() {
     ],
   };
 
-  const fetchNewArrivalAncientBooks = async () => {
+  const fetchBookInfo = async () => {
     try {
       const res = await fetch(`/api/books/info/${id}`);
       const data = await res.json();
@@ -159,7 +157,7 @@ export default function BookPage() {
 
   useEffect(() => {
     if (id) {
-      fetchNewArrivalAncientBooks();
+      fetchBookInfo();
     }
   }, [id]);
 

@@ -26,7 +26,8 @@ const Card: React.FC<Props> = ({
   imgSize,
   disableBorderRadius = false,
 }) => {
-  const { name, image } = item ?? {};
+  //const { name, Image } = item ?? {};
+  const { Name, Image: itemImage } = item ?? {};
   const imageSize: any =
     (imgSize === "large" && 375) ||
     (size === "small" && 180) ||
@@ -49,8 +50,8 @@ const Card: React.FC<Props> = ({
       >
         <div className="flex">
           <Image
-            src={image?.original ?? placeholderImage}
-            alt={name || t("text-card-thumbnail")}
+            src={itemImage?.Original ?? placeholderImage}
+            alt={Name || t("text-card-thumbnail")}
             width={imageSize}
             height={imageSize}
             quality={100}
@@ -76,7 +77,7 @@ const Card: React.FC<Props> = ({
       </div>
       {!!showName !== false && (
         <Text variant="heading" className="capitalize">
-          {name}
+          {Name}
         </Text>
       )}
     </Link>

@@ -16,7 +16,6 @@ let pool: sql.ConnectionPool;
 export async function getConnection() {
   if (!pool) {
     pool = await sql.connect(config);
-    console.log("Connected to DB:", process.env.DB_DATABASE);
   }
   return pool;
 }
