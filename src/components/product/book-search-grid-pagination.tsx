@@ -32,12 +32,6 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
   });
   const totalPages = data?.pagination?.totalPages ?? 0;
 
-  console.log("Categories inside usePaginatedBooksQuery:", data);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   useEffect(() => {
     if (data?.pagination?.totalBooks) {
       setCount(data.pagination.totalBooks);
