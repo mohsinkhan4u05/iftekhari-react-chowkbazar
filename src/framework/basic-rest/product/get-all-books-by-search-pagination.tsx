@@ -22,7 +22,7 @@ const fetchAllBooks = async (
   pageSize = 10
 ): Promise<BookResponse> => {
   const categoryParam = categories.join(",");
-  const url = `/api/books/search?categories=${encodeURIComponent(
+  const url = `/books/search?categories=${encodeURIComponent(
     categoryParam
   )}&page=${page}&pageSize=${pageSize}`;
 
@@ -51,7 +51,7 @@ export const usePaginatedBooksQuery = ({
   return useQuery<BookResponse, Error>({
     //queryKey: ["books", categories, page, pageSize],
     queryKey: [
-      "/api/books/search?categories",
+      "/books/search?categories",
       categories.join(","),
       page,
       pageSize,

@@ -9,28 +9,42 @@ export default async function handler(
     const { limit = "10", offset = "0", type = "popular" } = req.query;
     const pool = await getConnection();
 
-    let query = `SELECT * FROM Iftekhari.Book`;
     const conditions: string[] = [];
 
+    // Default ORDER BY
+    let orderByField = "b.ID";
+    let orderDirection = "ASC";
+
     if (type === "popular") {
-      conditions.push("Popular = 1");
+      conditions.push("b.Popular = 1");
     } else if (type === "editor-choice") {
-      conditions.push("EditorChoice = 1");
+      conditions.push("b.EditorChoice = 1");
+    } else if (type === "new-arrival") {
+      orderDirection = "DESC";
     }
+
+    // Start query — 🔥 removed the trailing comma!
+    let query = `
+      SELECT 
+        b.*, 
+        c.Name AS CategoryName
+      FROM Iftekhari.Book b
+      LEFT JOIN Iftekhari.Category c ON b.CategoryID = c.ID
+    `;
 
     if (conditions.length > 0) {
       query += ` WHERE ${conditions.join(" AND ")}`;
     }
 
-    if (type === "new-arrival") {
-      query += " ORDER BY ID DESC";
-    } else {
-      query += " ORDER BY ID ASC";
-    }
+    const safeOrderBy = `${orderByField} ${orderDirection}`;
 
-    query += ` OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY`;
+    query += ` ORDER BY ${safeOrderBy} OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`;
 
-    const result = await pool.request().query(query);
+    const result = await pool
+      .request()
+      .input("offset", Number(offset))
+      .input("limit", Number(limit))
+      .query(query);
 
     res.status(200).json(result.recordset);
   } catch (error) {
