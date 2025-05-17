@@ -3,7 +3,7 @@ import SectionHeader from "@components/common/section-header";
 import Carousel from "@components/ui/carousel/carousel";
 import CardLoader from "@components/ui/loaders/card-loader";
 import CardRoundedLoader from "@components/ui/loaders/card-rounded-loader";
-import { useCategoriesQuery } from "@framework/category/get-all-categories";
+import { useCategoriesBookQuery } from "@framework/category/get-all-categories-books";
 import { ROUTES } from "@utils/routes";
 import Alert from "@components/ui/alert";
 import { SwiperSlide } from "swiper/react";
@@ -83,7 +83,7 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
     },
   };
 
-  const { data, isLoading, error } = useCategoriesQuery({
+  const { data, isLoading, error } = useCategoriesBookQuery({
     limit: 10,
     demoVariant: demoVariant || undefined,
   });
