@@ -16,6 +16,7 @@ import DownloadApps from "@components/common/download-apps";
 import CategoryBlockBook from "@containers/category-block-book";
 import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
 import HireDesignerAncient from "@containers/buy-designer-ancient";
+import CategoryBlock from "@containers/category-block";
 
 export default function Home() {
   const sectionCommonStyle = "mb-7 md:mb-10 lg:mb-12 xl:mb-14 2xl:mb-[75px]";
@@ -31,7 +32,8 @@ export default function Home() {
       /> */}
 
       <Container>
-        <CategoryBlockBook
+        <CategoryBlock sectionHeading="Books By Category" />
+        {/* <CategoryBlockBook
           type="rounded"
           sectionHeading="Browse Categories"
           roundedItemCount={5}
@@ -40,7 +42,7 @@ export default function Home() {
           demoVariant="ancient"
           disableBorderRadius={true}
           className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
-        />
+        /> */}
 
         <NewArrivalsBookFeed
           demoVariant="ancient"

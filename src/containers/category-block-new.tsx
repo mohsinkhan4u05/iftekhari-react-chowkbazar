@@ -19,7 +19,21 @@ interface CategoriesProps {
   disableBorderRadius?: boolean;
 }
 
-const CategoryBlock: React.FC<CategoriesProps> = ({
+const bgColors = [
+  "bg-teal-700",
+  "bg-purple-800",
+  "bg-green-700",
+  "bg-pink-800",
+  "bg-blue-800",
+  "bg-orange-600",
+  "bg-yellow-800",
+  "bg-indigo-800",
+  "bg-red-800",
+  "bg-rose-800",
+  "bg-fuchsia-800",
+];
+
+const CategoryBlockNew: React.FC<CategoriesProps> = ({
   className = "mb-10 md:mb-11 lg:mb-12 xl:mb-14 lg:pb-1 xl:pb-0",
   sectionHeading,
   type = "circle",
@@ -116,17 +130,20 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
                   </SwiperSlide>
                 );
               })
-            : data?.categories?.data?.map((category) => (
+            : data?.categories?.data?.map((category, index) => (
                 <SwiperSlide key={`category--key-${category.ID}`}>
-                  <Card
-                    imgSize={imgSize}
-                    item={category}
-                    href={`${ROUTES.BOOK}?category=${category.Name}`}
-                    variant={type}
-                    effectActive={true}
-                    size={type === "rounded" ? "medium" : "small"}
-                    disableBorderRadius={disableBorderRadius}
-                  />
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-20 h-20 md:w-24 md:h-24 rounded-full border-4 border-pink-400 flex items-center justify-center text-white font-bold text-sm md:text-lg ${
+                        bgColors[index % bgColors.length]
+                      }`}
+                    >
+                      {category.Name}
+                    </div>
+                    <span className="mt-2 text-sm font-medium">
+                      {category.Name}
+                    </span>
+                  </div>
                 </SwiperSlide>
               ))}
         </Carousel>
@@ -135,4 +152,4 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
   );
 };
 
-export default CategoryBlock;
+export default CategoryBlockNew;
