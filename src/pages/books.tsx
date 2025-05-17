@@ -1,7 +1,6 @@
 import Container from "@components/ui/container";
 import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
-import ShopDiscount from "@components/shop/discount";
 import { ShopFilters } from "@components/shop/filters";
 import StickyBox from "react-sticky-box";
 //import { BookSearchGrid } from "@components/product/book-search-grid";

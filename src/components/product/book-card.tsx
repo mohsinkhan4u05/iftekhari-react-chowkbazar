@@ -266,11 +266,112 @@ const BookCard: FC<BookProps> = ({
             {product?.description}
           </p>
         )} */}
-        {product?.Author && (
-          <p className="text-body text-xs lg:text-sm leading-normal xl:leading-relaxed max-w-[250px] truncate">
-            {product?.Author}
-          </p>
-        )}
+        {/* Meta Info Section */}
+        {/* Meta Info */}
+        <div className="flex flex-col gap-y-1 text-xs sm:text-sm text-gray-700">
+          {/* Author */}
+          {product?.Author && <p className="truncate mb-1">{product.Author}</p>}
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-4 mb-1">
+            {product?.TotalPages && (
+              <span className="flex items-center gap-1 mb-1 sm:mb-0">
+                {/* Page icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"
+                  />
+                </svg>
+                {product.TotalPages} pages
+              </span>
+            )}
+
+            {product?.Views && (
+              <span className="flex items-center gap-1">
+                {/* Eye icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                {product.Views} views
+              </span>
+            )}
+          </div>
+
+          {/* Category + Language */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-4 text-black">
+            {product?.CategoryName && (
+              <span className="flex items-center gap-1 mb-1 sm:mb-0">
+                {/* Tag icon */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7 7a2 2 0 114 0 2 2 0 01-4 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5.5 10.5L19 4l1.5 1.5L7 19 5.5 17.5z"
+                  />
+                </svg>
+                {product.CategoryName}
+              </span>
+            )}
+
+            {product?.Language && (
+              <span className="flex items-center gap-1">
+                {/* Globe icon for language */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3C7.029 3 3 7.029 3 12s4.029 9 9 9 9-4.029 9-9-4.029-9-9-9zm0 0c0 2.5 1.5 6 3 6s3-3.5 3-6m-6 0C9 3 7.5 6.5 7.5 9s1.5 6 3 6m0 0c-2.5 0-6-1.5-6-3s3.5-3 6-3m0 6c2.5 0 6-1.5 6-3s-3.5-3-6-3"
+                  />
+                </svg>
+                {product.Language}
+              </span>
+            )}
+          </div>
+        </div>
+
         <div
           className={`font-semibold text-sm sm:text-base mt-1.5 flex flex-wrap gap-x-2 ${
             variant === "grid"

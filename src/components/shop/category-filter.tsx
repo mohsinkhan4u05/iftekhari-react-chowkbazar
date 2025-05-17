@@ -1,4 +1,4 @@
-import { useCategoriesQuery } from "@framework/category/get-all-categories";
+import { useCategoriesBookQuery } from "@framework/category/get-all-categories-books";
 import { CheckBox } from "@components/ui/checkbox";
 import { useRouter } from "next/router";
 import React from "react";
@@ -8,7 +8,7 @@ export const CategoryFilter = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { pathname, query } = router;
-  const { data, isLoading } = useCategoriesQuery({
+  const { data, isLoading } = useCategoriesBookQuery({
     limit: 10,
   });
 
@@ -54,11 +54,11 @@ export const CategoryFilter = () => {
       <div className="mt-2 flex flex-col space-y-4">
         {items?.map((item: any) => (
           <CheckBox
-            key={item.id}
-            label={item.name}
-            name={item.name.toLowerCase()}
-            checked={formState.includes(item.name)}
-            value={item.name}
+            key={item?.ID}
+            label={item?.Name}
+            name={item?.Name?.toLowerCase()}
+            checked={formState.includes(item?.Name)}
+            value={item?.Name}
             onChange={handleItemClick}
           />
         ))}

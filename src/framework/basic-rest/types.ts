@@ -108,6 +108,7 @@ export type Book = {
   BookId: string;
   Language: string;
   CategoryId: number;
+  CategoryName: string;
   TotalPages: number;
   AddedBy: string;
   UpdatedBy: string;
