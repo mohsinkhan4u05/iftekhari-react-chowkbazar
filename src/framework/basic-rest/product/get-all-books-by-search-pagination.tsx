@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import http from "@framework/utils/http";
-import shuffle from "lodash/shuffle";
-import { QueryOptionsType, Book } from "@framework/types";
+import { Book } from "@framework/types";
+// import shuffle from "lodash/shuffle"; // Optional if you need random order
 
 export type BookResponse = {
   data: Book[];
@@ -22,21 +22,31 @@ const fetchAllBooks = async (
   pageSize = 10
 ): Promise<BookResponse> => {
   const categoryParam = categories.join(",");
-  const url = `${API_ENDPOINTS.BOOKS_SEARCH}?categories=${encodeURIComponent(
+  const url = `/books/search?categories=${encodeURIComponent(
     categoryParam
   )}&page=${page}&pageSize=${pageSize}`;
-  const { data } = await http.get(url);
+
+  const response = await http.get(url);
+  const { data, success, pagination, message } = response.data;
+
+  // const normalizedBooks = data.map((book: any) => ({
+  //   id: book.Id,
+  //   name: book.Name,
+  //   slug: book.Slug,
+  //   image: book.Image,
+  //   categoryId: book.CategoryId,
+  //   // add others as needed
+  // }));
+
+  // if (!success) {
+  //   throw new Error(message || "Failed to fetch books");
+  // }
+
   return {
-    ...data,
-    data: shuffle(data.data), // Shuffle only if needed
+    data: data, // or shuffle(data) if needed
+    pagination,
   };
 };
-
-// type UseBookBySearchQueryOptions = {
-//   categories?: string[];
-//   page?: number;
-//   pageSize?: number;
-// };
 
 export const usePaginatedBooksQuery = ({
   categories = [],
@@ -48,8 +58,14 @@ export const usePaginatedBooksQuery = ({
   pageSize?: number;
 }) => {
   return useQuery<BookResponse, Error>({
-    queryKey: ["books", categories, page, pageSize],
+    //queryKey: ["books", categories, page, pageSize],
+    queryKey: [
+      "/books/search?categories",
+      categories.join(","),
+      page,
+      pageSize,
+    ],
     queryFn: () => fetchAllBooks(categories, page, pageSize),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };

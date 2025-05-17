@@ -32,6 +32,8 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
   });
   const totalPages = data?.pagination?.totalPages ?? 0;
 
+  console.log("Categories inside usePaginatedBooksQuery:", data);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -57,7 +59,7 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
           <ProductFeedLoader limit={10} uniqueKey="book-grid" />
         ) : (
           data?.data?.map((book) => (
-            <BookCard key={book.id} product={book} variant="grid" />
+            <BookCard key={book.ID} product={book} variant="grid" />
           ))
         )}
       </div>

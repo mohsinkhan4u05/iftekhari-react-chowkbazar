@@ -27,140 +27,117 @@ export default function ProductPopup() {
     );
   }
 
-  function handleAttribute(attribute: any) {
-    setAttributes((prev) => ({
-      ...prev,
-      ...attribute,
-    }));
-  }
+  const Detail = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: React.ReactNode;
+  }) => (
+    <div className="flex gap-x-2">
+      <span className="font-semibold">{label}:</span>
+      <span>{value || "Not Available"}</span>
+    </div>
+  );
 
   return (
-    <div className="rounded-lg bg-white">
-      <div className="flex flex-col lg:flex-row w-full md:w-[650px] lg:w-[960px] mx-auto overflow-hidden">
-        <div className="flex-shrink-0 flex items-center justify-center w-full lg:w-430px max-h-430px lg:max-h-full overflow-hidden bg-gray-300">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+    <div className="bg-white rounded-lg w-full max-w-[960px] mx-auto overflow-hidden shadow-lg">
+      <div className="flex flex-col lg:flex-row">
+        {/* Left - Image */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center bg-gray-100">
           <img
             src={
               placeholderImage ??
               "/assets/placeholder/products/product-thumbnail.svg"
             }
             alt={Name}
-            className="lg:object-cover lg:w-full lg:h-full"
+            className="object-contain max-h-[600px] w-auto"
           />
         </div>
 
-        <div className="flex flex-col p-5 md:p-8 w-full">
-          <div className="pb-5">
-            <div
-              className="mb-2 md:mb-2.5 block -mt-1.5"
-              onClick={navigateToBookPage}
-              role="button"
-            >
-              <h2 className="text-heading text-lg md:text-xl lg:text-2xl font-semibold hover:text-black">
-                {Name}
-              </h2>
-            </div>
+        {/* Right - Info */}
+        <div className="w-full lg:w-1/2 p-6 md:p-8 space-y-5">
+          <h2
+            onClick={navigateToBookPage}
+            role="button"
+            className="text-2xl font-bold text-gray-800 hover:text-black cursor-pointer"
+          >
+            {Name}
+          </h2>
 
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>author : </b>
-              {data?.Author ?? "Not Available"}
-            </div>
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>translator : </b>
-              {data?.Translator ?? "Not Available"}
-            </div>
+          <div className="space-y-2 text-sm text-gray-700">
+            {/* Author & Translator in separate lines */}
+            <Detail label="Author" value={data?.Author} />
+            <Detail label="Translator" value={data?.Translator} />
 
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>rating : </b>
-              <RatingDisplay rating={3.5} />
+            {/* Remaining details in a responsive grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2">
+              <Detail label="Rating" value={<RatingDisplay rating={3.5} />} />
+              <Detail label="Views" value={data?.Views ?? 0} />
+              <Detail label="Pages" value={data?.TotalPages ?? 0} />
+              <Detail label="Category" value={data?.CategoryName} />
+              <Detail label="Language" value={data?.Language} />
             </div>
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>views : </b>
-              {data?.Views ?? 0}
-            </div>
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>tags : </b>
-              {data?.Tags ?? 0}
-            </div>
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>pages : </b>
-              {data?.TotalPages ?? 0}
-            </div>
-            {/* <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>category : </b>
-              {data?.Category ?? "Not Available"}
-            </div> */}
-            <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row mb-0.5 items-start">
-              <b style={{ paddingRight: 16 }}>language : </b>
-              {data?.Language ?? "Not Available"}
-            </div>
+          </div>
 
-            {/* <div className="flex items-center mt-3">
-              <div className="text-heading font-semibold text-base md:text-xl lg:text-2xl">
-                {price}
+          {/* Tags */}
+          {data?.Tags && (
+            <div>
+              <div className="text-sm font-semibold text-gray-700 mb-1">
+                Tags:
               </div>
-              {discount && (
-                <del className="font-segoe text-gray-400 text-base lg:text-xl ltr:pl-2.5 rtl:pr-2.5 -mt-0.5 md:mt-0">
-                  {basePrice}
-                </del>
-              )}
-            </div>  */}
-          </div>
-
-          {Object.keys(variations).map((variation) => {
-            return (
-              <ProductAttributes
-                key={`popup-attribute-key${variation}`}
-                title={variation}
-                attributes={variations[variation]}
-                active={attributes[variation]}
-                onClick={handleAttribute}
-              />
-            );
-          })}
-
-          <div className="pt-2 md:pt-4">
-            <div className="flex items-center justify-between mb-4 gap-x-3 sm:gap-x-4">
-              {/* <Counter
-                quantity={quantity}
-                onIncrement={() => setQuantity((prev) => prev + 1)}
-                onDecrement={() =>
-                  setQuantity((prev) => (prev !== 1 ? prev - 1 : 1))
-                }
-                disableDecrement={quantity === 1}
-              /> */}
-              {/* <Button
-                onClick={addToCart}
-                variant="flat"
-                className={`w-full h-11 md:h-12 px-1.5 ${
-                  !isSelected && "bg-gray-400 hover:bg-gray-400"
-                }`}
-                disabled={!isSelected}
-                loading={addToCartLoader}
-              >
-                {t("text-add-to-cart")}
-              </Button> */}
+              <div className="flex flex-wrap gap-2">
+                {data.Tags.split(",").map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full bg-gray-200 text-xs text-gray-800"
+                  >
+                    {tag.trim()}
+                  </span>
+                ))}
+              </div>
             </div>
+          )}
 
-            {/* {viewCartBtn && (
-              <button
-                onClick={navigateToCartPage}
-                className="w-full mb-4 h-11 md:h-12 rounded bg-gray-100 text-heading focus:outline-none border border-gray-300 transition-colors hover:bg-gray-50 focus:bg-gray-50"
-              >
-                {t("text-view-cart")}
-              </button>
-            )} */}
+          {/* Variations (if needed) */}
+          {Object.keys(variations).length > 0 && (
+            <div className="pt-2">
+              {Object.keys(variations).map((variation) => (
+                <ProductAttributes
+                  key={`popup-attribute-key${variation}`}
+                  title={variation}
+                  attributes={variations[variation]}
+                  active={data[variation]}
+                  onClick={() => {}}
+                />
+              ))}
+            </div>
+          )}
 
-            <Button
-              onClick={navigateToBookPage}
-              variant="flat"
-              className="w-full h-11 md:h-12"
-            >
-              {t("text-view-details")}
-            </Button>
-          </div>
+          {/* CTA */}
+          <Button
+            onClick={navigateToBookPage}
+            variant="flat"
+            className="w-full h-11 mt-4"
+          >
+            {t("text-read-book")}
+          </Button>
         </div>
       </div>
     </div>
   );
 }
+
+// Component for Label-Value pairs
+const Detail = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: React.ReactNode;
+}) => (
+  <div className="flex gap-x-2">
+    <span className="font-semibold">{label}:</span>
+    <span>{value || "Not Available"}</span>
+  </div>
+);
