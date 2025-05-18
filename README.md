@@ -36,7 +36,7 @@ Within the project directory you'll find a `.env.local.template` file just renam
 Run below command for getting started with this template.
 
 ```bash
-# on chawkbazar directory
+# on Iftekhari Silsila directory
 $ pnpm install
 $ pnpm dev # which will running the template for development
 ```
