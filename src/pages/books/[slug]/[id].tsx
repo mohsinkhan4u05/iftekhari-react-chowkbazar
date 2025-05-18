@@ -15,6 +15,55 @@ const Slider = dynamic(() => import("react-slick"), {
   ssr: false,
 });
 
+const Wrapper = styled.div`
+  position: relative;
+
+  .slick-prev,
+  .slick-next {
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+
+    img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1); /* make arrow white */
+    }
+  }
+
+  .slick-prev {
+    left: 16px;
+
+    @media (max-width: 768px) {
+      left: 8px;
+    }
+  }
+
+  .slick-next {
+    right: 16px;
+
+    @media (max-width: 768px) {
+      right: 8px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .slick-prev img,
+    .slick-next img {
+      display: none;
+    }
+  }
+`;
+
 export default function BookPage() {
   const router = useRouter();
   const { id } = router.query;
@@ -23,7 +72,6 @@ export default function BookPage() {
 
   const PrevArrow = (props: any) => {
     const { className, onClick } = props;
-
     return (
       <div className={className} onClick={onClick}>
         <img src="/assets/images/left-arrow.svg" alt="left-arrow" />
@@ -33,106 +81,28 @@ export default function BookPage() {
 
   const NextArrow = (props: any) => {
     const { className, onClick } = props;
-
     return (
       <div className={className} onClick={onClick}>
-        <img src="/assets//images/right-arrow.svg" alt="right-arrow" />
+        <img src="/assets/images/right-arrow.svg" alt="right-arrow" />
       </div>
     );
   };
 
-  const Wrapper = styled.div`
-    .slick-next {
-      z-index: 1;
-      right: 30px;
-      width: 50px;
-      height: 50px;
-      &:before {
-        display: none;
-      }
-    }
-
-    .slick-prev {
-      z-index: 1;
-      left: 15px;
-      width: 50px;
-      height: 50px;
-      &:before {
-        display: none;
-      }
-    }
-
-    .slick-prev:hover,
-    .slick-prev:focus,
-    .slick-next:hover,
-    .slick-next:focus {
-      color: tomato;
-      outline: none;
-      background: transparent;
-      background: lightgray;
-    }
-  `;
-
   const settings: any = {
     dots: false,
     infinite: infiniteState,
-
-    slidesToShow: 2,
+    slidesToShow: 1,
     slidesToScroll: 1,
     lazyLoad: true,
     initialSlide: 0,
-    className: "center",
     focusOnSelect: true,
     adaptiveHeight: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-          infinite: infiniteState,
-        },
-      },
-      {
-        breakpoint: 800,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-          infinite: infiniteState,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-          infinite: infiniteState,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          initialSlide: 1,
-          infinite: infiniteState,
-        },
-      },
-      {
-        breakpoint: 350,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: infiniteState,
-          initialSlide: 1,
-        },
-      },
-    ],
+    swipe: true,
+    touchMove: true,
+    swipeToSlide: true,
+    arrows: true, // make sure it's not false
+    // prevArrow: <PrevArrow />,
+    // nextArrow: <NextArrow />,
   };
 
   const fetchBookInfo = async () => {
@@ -141,11 +111,7 @@ export default function BookPage() {
       const data = await res.json();
 
       if (res.ok) {
-        if (data?.Images?.length > 3) {
-          setInfinite(true);
-        } else {
-          setInfinite(false);
-        }
+        setInfinite(data?.Images?.length > 3);
         setBook(data);
       } else {
         console.error("Failed to fetch book info:", data.error);
@@ -162,50 +128,39 @@ export default function BookPage() {
   }, [id]);
 
   return (
-    <>
-      <Divider className="mb-0" />
-      <Container>
-        <div className="pt-8">
-          <Breadcrumb />
-        </div>
-        <Head>
-          <title>{book.Name + " | E-BOOK"}</title>
-          <meta
-            name="description"
-            content={"sufi book " + book.Name + " by " + book.Author}
-            key="desc"
-          />
-        </Head>
-        <div>
-          <Wrapper>
-            {book && book.Images?.length > 0 && (
-              <Slider {...settings}>
-                {book &&
-                  book.Images?.map((item: any) => (
-                    <div key={item} className="w-full">
-                      <TransformWrapper>
-                        <TransformComponent
-                          contentStyle={{ width: "100%" }}
-                          wrapperStyle={{ width: "100%" }}
-                        >
-                          <img
-                            className="w-[80%] h-auto object-cover"
-                            style={{ objectFit: "cover" }}
-                            key={item}
-                            alt={book.Name + " Sufi Book"}
-                            title={"Author " + book.Author}
-                            src={item}
-                          />
-                        </TransformComponent>
-                      </TransformWrapper>
+    <div className="w-screen h-screen overflow-hidden m-0 p-0">
+      <Wrapper>
+        {book && book.Images?.length > 0 && (
+          <Slider {...settings}>
+            {book.Images.map((item: any, index: number) => (
+              <div
+                key={index}
+                className="w-screen h-screen flex justify-center items-center"
+              >
+                <TransformWrapper
+                  pinch={{ disabled: true }}
+                  doubleClick={{ disabled: true }}
+                  wheel={{ disabled: true }}
+                >
+                  <TransformComponent
+                    contentStyle={{ width: "100%" }}
+                    wrapperStyle={{ width: "100%" }}
+                  >
+                    <div className="h-[80vh] md:h-[95vh] w-full">
+                      <img
+                        className="w-full h-full object-contain"
+                        src={item}
+                        alt={`Page ${index + 1}`}
+                      />
                     </div>
-                  ))}
-              </Slider>
-            )}
-          </Wrapper>
-        </div>
-      </Container>
-    </>
+                  </TransformComponent>
+                </TransformWrapper>
+              </div>
+            ))}
+          </Slider>
+        )}
+      </Wrapper>
+    </div>
   );
 }
 
