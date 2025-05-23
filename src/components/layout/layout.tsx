@@ -25,9 +25,10 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
         canonical="Iftekhari Silsila"
         openGraph={{
           url: "Iftekhari Silsila",
-          title: "Iftekhari Silsila React - React Next E-commerce Template",
+          title:
+            "Iftekhari Silsila - Sufi Books , E-Books, Audio Books, Video Books, Islamic Books, Urdu Books, Hindi Books, English Books",
           description:
-            "sufi Books , E-Books, Audio Books, Video Books, Islamic Books, Urdu Books, Hindi Books, English Books",
+            "Sufi Books , E-Books, Audio Books, Video Books, Islamic Books, Urdu Books, Hindi Books, English Books",
           images: [
             {
               url: "/assets/images/og-image-01.png",
