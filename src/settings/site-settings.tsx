@@ -26,7 +26,7 @@ import { SneakerIcon } from "@components/icons/sneaker-icon";
 export const siteSettings = {
   name: "Iftekhari Silisla",
   description:
-    "Fastest E-commerce template built with React, NextJS, TypeScript, @tanstack/react-query and Tailwind CSS.",
+    "Sufi Books , Sufi Music, Sufi Videos, Sufi Poetry, Sufi Quotes, Sufi Articles",
   author: {
     name: "IFTEKHARI SILSILA",
     websiteUrl: "http://www.silsilaeiftekhari.in/",
