@@ -21,13 +21,13 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
           },
         ]}
         title="Iftekhari Silsila"
-        description="Fastest E-commerce template built with React, NextJS, TypeScript, @tanstack/react-query and Tailwind CSS."
+        description="Sufi Books , Sufi Music, Sufi Videos, Sufi Poetry, Sufi Quotes, Sufi Articles"
         canonical="https://www.silsilaeiftekhari.in/"
         openGraph={{
           url: "https://www.silsilaeiftekhari.in/",
           title: "Iftekhari Silsila",
           description:
-            "Fastest E-commerce template built with React, NextJS, TypeScript, @tanstack/react-query and Tailwind CSS.",
+            "Sufi Books , Sufi Music, Sufi Videos, Sufi Poetry, Sufi Quotes, Sufi Articles",
           images: [
             {
               url: "/assets/images/og-image-01.png",
