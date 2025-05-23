@@ -89,6 +89,9 @@ dependencies:
   react-icons:
     specifier: 5.4.0
     version: 5.4.0(react@19.0.0)
+  react-paginate:
+    specifier: ^8.3.0
+    version: 8.3.0(react@19.0.0)
   react-query:
     specifier: 3.39.3
     version: 3.39.3(react-dom@19.0.0)(react@19.0.0)
@@ -5839,6 +5842,15 @@ packages:
 
   /react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+    dev: false
+
+  /react-paginate@8.3.0(react@19.0.0):
+    resolution: {integrity: sha512-TptZE37HPkT3R+7AszWA++LOTIsIHXcCSWMP9WW/abeF8sLpJzExFB/dVs7xbtqteJ5njF6kk+udTDC0AR3y5w==}
+    peerDependencies:
+      react: ^16 || ^17 || ^18 || ^19
+    dependencies:
+      prop-types: 15.8.1
+      react: 19.0.0
     dev: false
 
   /react-query@3.39.3(react-dom@19.0.0)(react@19.0.0):

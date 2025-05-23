@@ -5,19 +5,30 @@ import Breadcrumb from "@components/common/breadcrumb";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useRef } from "react";
 import Head from "next/head";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
+import ReactPaginate from "react-paginate";
 
-const Slider = dynamic(() => import("react-slick"), {
-  ssr: false,
+const SlickWithRef = forwardRef<any>((props, ref) => {
+  const Slider = require("react-slick").default;
+  return <Slider ref={ref} {...props} />;
 });
+// const Slider = dynamic(() => import("react-slick"), {
+//   ssr: false,
+// });
 
 const Wrapper = styled.div`
   position: relative;
-
+  height: 75vh;
+  .slick-slider,
+  .slick-list,
+  .slick-track,
+  .slick-slide > div {
+    height: 100%; /* 👈 ensures all internal slider elements take full height */
+  }
   .slick-prev,
   .slick-next {
     z-index: 10;
@@ -69,24 +80,9 @@ export default function BookPage() {
   const { id } = router.query;
   const [book, setBook]: any = useState([]);
   const [infiniteState, setInfinite] = useState(false);
-
-  const PrevArrow = (props: any) => {
-    const { className, onClick } = props;
-    return (
-      <div className={className} onClick={onClick}>
-        <img src="/assets/images/left-arrow.svg" alt="left-arrow" />
-      </div>
-    );
-  };
-
-  const NextArrow = (props: any) => {
-    const { className, onClick } = props;
-    return (
-      <div className={className} onClick={onClick}>
-        <img src="/assets/images/right-arrow.svg" alt="right-arrow" />
-      </div>
-    );
-  };
+  const sliderRef = useRef<any>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const settings: any = {
     dots: false,
@@ -101,8 +97,10 @@ export default function BookPage() {
     touchMove: true,
     swipeToSlide: true,
     arrows: true, // make sure it's not false
-    // prevArrow: <PrevArrow />,
-    // nextArrow: <NextArrow />,
+    afterChange: (index: number) => setCurrentSlide(index),
+    beforeChange: (oldIndex: number, newIndex: number) => {
+      setCurrentPage(newIndex); // update dropdown when slider changes
+    },
   };
 
   const fetchBookInfo = async () => {
@@ -127,37 +125,65 @@ export default function BookPage() {
     }
   }, [id]);
 
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedIndex = Number(e.target.value);
+    setCurrentPage(selectedIndex);
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(selectedIndex);
+    }
+  };
+
   return (
     <div className="w-screen h-screen overflow-hidden m-0 p-0">
       <Wrapper>
         {book && book.Images?.length > 0 && (
-          <Slider {...settings}>
-            {book.Images.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="w-screen h-screen flex justify-center items-center"
-              >
-                <TransformWrapper
-                  pinch={{ disabled: true }}
-                  doubleClick={{ disabled: true }}
-                  wheel={{ disabled: true }}
+          <>
+            <SlickWithRef ref={sliderRef} {...settings}>
+              {book.Images.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="w-screen h-screen flex justify-center items-center"
                 >
-                  <TransformComponent
-                    contentStyle={{ width: "100%" }}
-                    wrapperStyle={{ width: "100%" }}
+                  <TransformWrapper
+                    pinch={{ disabled: false }}
+                    doubleClick={{ disabled: false }}
+                    wheel={{ disabled: false }}
                   >
-                    <div className="h-[80vh] md:h-[95vh] w-full">
-                      <img
-                        className="w-full h-full object-contain"
-                        src={item}
-                        alt={`Page ${index + 1}`}
-                      />
-                    </div>
-                  </TransformComponent>
-                </TransformWrapper>
+                    <TransformComponent
+                      contentStyle={{ width: "100%" }}
+                      wrapperStyle={{ width: "100%" }}
+                    >
+                      <div className="h-[75vh] md:h-[75vh] w-full">
+                        <img
+                          className="w-full h-full object-contain"
+                          src={item}
+                          alt={`Page ${index + 1}`}
+                        />
+                      </div>
+                    </TransformComponent>
+                  </TransformWrapper>
+                </div>
+              ))}
+            </SlickWithRef>
+            {/* Move this into safe visible zone */}
+            {/* Dropdown for pagination */}
+            {book.Images && book.Images.length > 1 && (
+              <div className="mt-4 px-4 flex justify-center">
+                <select
+                  value={currentPage}
+                  onChange={handleSelectChange}
+                  className="border border-gray-300 rounded-md px-3 py-2 text-base cursor-pointer max-w-xs w-full"
+                  aria-label="Select page"
+                >
+                  {book.Images.map((_, index) => (
+                    <option key={index} value={index}>
+                      Page {index + 1}
+                    </option>
+                  ))}
+                </select>
               </div>
-            ))}
-          </Slider>
+            )}
+          </>
         )}
       </Wrapper>
     </div>
