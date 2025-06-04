@@ -9,13 +9,16 @@ import { useAddActiveScroll } from "@utils/use-add-active-scroll";
 import dynamic from "next/dynamic";
 import { useTranslation } from "next-i18next";
 import LanguageSwitcher from "@components/ui/language-switcher";
+import { signIn, signOut, useSession } from "next-auth/react";
 const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
+import UserMenu from "@components/my-account/user-menu";
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
 
 const { site_header } = siteSettings;
 const Header: React.FC = () => {
+  const { data: session } = useSession();
   const { openSearch, openModal, setModalView, isAuthorized } = useUI();
   const { t } = useTranslation("common");
   const siteHeaderRef = useRef<HTMLDivElement>(null);
@@ -52,22 +55,30 @@ const Header: React.FC = () => {
             >
               <SearchIcon />
             </button>
-            {/* <div className="-mt-0.5 flex-shrink-0">
-              <AuthMenu
-                isAuthorized={isAuthorized}
-                href={ROUTES.ACCOUNT}
-                className="text-sm font-semibold xl:text-base text-heading"
-                btnProps={{
-                  className:
-                    "text-sm xl:text-base text-heading font-semibold focus:outline-none",
-                  // @ts-ignore
-                  children: t("text-sign-in"),
-                  onClick: handleLogin,
-                }}
-              >
-                {t("text-account")}
-              </AuthMenu>
-            </div> */}
+            {session && (
+              <div>
+                <UserMenu />
+              </div>
+            )}
+            {!session && (
+              <div className="-mt-0.5 flex-shrink-0">
+                <AuthMenu
+                  isAuthorized={isAuthorized}
+                  href={ROUTES.ACCOUNT}
+                  className="text-sm font-semibold xl:text-base text-heading"
+                  btnProps={{
+                    className:
+                      "text-sm xl:text-base text-heading font-semibold focus:outline-none",
+                    // @ts-ignore
+                    children: t("text-sign-in"),
+                    onClick: handleLogin,
+                  }}
+                >
+                  {t("text-account")}
+                </AuthMenu>
+              </div>
+            )}
+
             {/* <CartButton /> */}
           </div>
         </div>

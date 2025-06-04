@@ -10,6 +10,8 @@ import dynamic from "next/dynamic";
 import { Drawer } from "@components/common/drawer/drawer";
 import { getDirection } from "@utils/get-direction";
 import motionProps from "@components/common/drawer/motion";
+import { signIn, signOut, useSession } from "next-auth/react";
+import UserMenu from "@components/my-account/user-menu";
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
@@ -43,6 +45,7 @@ const BottomNavigation: React.FC = () => {
   const { locale } = useRouter();
   const dir = getDirection(locale);
   const contentWrapperCSS = dir === "ltr" ? { left: 0 } : { right: 0 };
+  const { data: session } = useSession();
 
   return (
     <>
@@ -64,19 +67,25 @@ const BottomNavigation: React.FC = () => {
         <Link href="/" className="flex-shrink-0">
           <HomeIcon />
         </Link>
-        {/* <CartButton /> */}
-        {/* <AuthMenu
-          isAuthorized={isAuthorized}
-          href={ROUTES.ACCOUNT}
-          className="flex-shrink-0"
-          btnProps={{
-            className: "flex-shrink-0 focus:outline-none",
-            children: <UserIcon />,
-            onClick: handleLogin,
-          }}
-        >
-          <UserIcon />
-        </AuthMenu> */}
+        {session && (
+          <div>
+            <UserMenu />
+          </div>
+        )}
+        {!session && (
+          <AuthMenu
+            isAuthorized={isAuthorized}
+            href={ROUTES.ACCOUNT}
+            className="flex-shrink-0"
+            btnProps={{
+              className: "flex-shrink-0 focus:outline-none",
+              children: <UserIcon />,
+              onClick: handleLogin,
+            }}
+          >
+            <UserIcon />
+          </AuthMenu>
+        )}
       </div>
       {/* TODO: need to use just one drawer component */}
       <Drawer

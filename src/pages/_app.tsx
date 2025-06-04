@@ -31,6 +31,7 @@ import "@styles/tailwind.css";
 import "@styles/rc-drawer.css";
 import { getDirection } from "@utils/get-direction";
 import { BookCountProvider } from "@contexts/book/book-count.context";
+import { SessionProvider } from "next-auth/react";
 
 function handleExitComplete() {
   if (typeof window !== "undefined") {
@@ -42,7 +43,10 @@ function Noop({ children }: React.PropsWithChildren<{}>) {
   return <>{children}</>;
 }
 
-const CustomApp = ({ Component, pageProps }: AppProps) => {
+const CustomApp = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) => {
   const queryClientRef = useRef<any>(null);
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient();
@@ -55,26 +59,28 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
   const Layout = (Component as any).Layout || Noop;
 
   return (
-    <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
-      <QueryClientProvider client={queryClientRef.current}>
-        {/* @ts-ignore */}
-        <HydrationBoundary state={pageProps.dehydratedState}>
+    <SessionProvider session={session}>
+      <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
+        <QueryClientProvider client={queryClientRef.current}>
           {/* @ts-ignore */}
-          <ManagedUIContext>
-            <Layout pageProps={pageProps}>
-              <DefaultSeo />
-              <BookCountProvider>
-                <Component {...pageProps} key={router.route} />
-              </BookCountProvider>
-              <ToastContainer toastClassName="!text-white" />
-            </Layout>
-            <ManagedModal />
-            <ManagedDrawer />
-          </ManagedUIContext>
-        </HydrationBoundary>
-        {/* <ReactQueryDevtools /> */}
-      </QueryClientProvider>
-    </AnimatePresence>
+          <HydrationBoundary state={pageProps.dehydratedState}>
+            {/* @ts-ignore */}
+            <ManagedUIContext>
+              <Layout pageProps={pageProps}>
+                <DefaultSeo />
+                <BookCountProvider>
+                  <Component {...pageProps} key={router.route} />
+                </BookCountProvider>
+                <ToastContainer toastClassName="!text-white" />
+              </Layout>
+              <ManagedModal />
+              <ManagedDrawer />
+            </ManagedUIContext>
+          </HydrationBoundary>
+          {/* <ReactQueryDevtools /> */}
+        </QueryClientProvider>
+      </AnimatePresence>
+    </SessionProvider>
   );
 };
 
