@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useUI } from "@contexts/ui.context";
 import Button from "@components/ui/button";
@@ -6,7 +6,8 @@ import { ProductAttributes } from "@components/product/product-attributes";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
 import RatingDisplay from "@components/common/rating-display";
-
+import Lottie from "lottie-react";
+import loaderAnimation from "/public/loader.json";
 export default function ProductPopup() {
   const { t } = useTranslation("common");
   const {
@@ -14,6 +15,7 @@ export default function ProductPopup() {
     closeModal,
   } = useUI();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const variations = getVariations(data.variations);
   const { Name, ImagePath } = data;
@@ -21,10 +23,13 @@ export default function ProductPopup() {
   const placeholderImage = `http://admin.silsilaeiftekhari.in/${ImagePath}`;
 
   function navigateToBookPage() {
-    closeModal();
-    router.push(
-      `/books/${Name.toLowerCase().replace(/\s+/g, "-")}/${data?.ID}`
-    );
+    setIsLoading(true);
+    setTimeout(() => {
+      closeModal();
+      router.push(
+        `/books/${Name.toLowerCase().replace(/\s+/g, "-")}/${data?.ID}`
+      );
+    }, 2000); // Optional delay for visual transition
   }
 
   const Detail = ({
@@ -115,13 +120,24 @@ export default function ProductPopup() {
           )}
 
           {/* CTA */}
-          <Button
-            onClick={navigateToBookPage}
-            variant="flat"
-            className="w-full h-11 mt-4"
-          >
-            {t("text-read-book")}
-          </Button>
+          {isLoading ? (
+            <div className="w-full h-16 flex items-center justify-center mt-4">
+              <Lottie
+                animationData={loaderAnimation}
+                loop
+                autoplay
+                className="w-20 h-20"
+              />
+            </div>
+          ) : (
+            <Button
+              onClick={navigateToBookPage}
+              variant="flat"
+              className="w-full h-11 mt-4"
+            >
+              {t("text-read-book")}
+            </Button>
+          )}
         </div>
       </div>
     </div>
