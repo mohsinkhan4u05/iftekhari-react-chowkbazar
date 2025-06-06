@@ -9,16 +9,12 @@ import { useEffect, useState, forwardRef, useRef } from "react";
 import Head from "next/head";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
-import dynamic from "next/dynamic";
-import ReactPaginate from "react-paginate";
+import { signIn, useSession } from "next-auth/react";
 
 const SlickWithRef = forwardRef<any>((props, ref) => {
   const Slider = require("react-slick").default;
   return <Slider ref={ref} {...props} />;
 });
-// const Slider = dynamic(() => import("react-slick"), {
-//   ssr: false,
-// });
 
 const Wrapper = styled.div`
   position: relative;
@@ -83,6 +79,9 @@ export default function BookPage() {
   const sliderRef = useRef<any>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const { data: session } = useSession();
+
+  console.log("currentPage", currentPage);
 
   const settings: any = {
     dots: false,
@@ -124,6 +123,12 @@ export default function BookPage() {
       fetchBookInfo();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (currentPage > 5 && !session) {
+      signIn("google");
+    }
+  }, [currentPage]);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedIndex = Number(e.target.value);
@@ -177,7 +182,7 @@ export default function BookPage() {
                 >
                   {book.Images.map((_, index) => (
                     <option key={index} value={index}>
-                      Page {index + 1}
+                      Page {index + 1} of {book.Images.length}
                     </option>
                   ))}
                 </select>
