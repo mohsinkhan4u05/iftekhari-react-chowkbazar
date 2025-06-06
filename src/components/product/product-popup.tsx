@@ -22,7 +22,31 @@ export default function ProductPopup() {
 
   const placeholderImage = `http://admin.silsilaeiftekhari.in/${ImagePath}`;
 
-  function navigateToBookPage() {
+  // function navigateToBookPage() {
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //   closeModal();
+  //     router.push(
+  //       `/books/${Name.toLowerCase().replace(/\s+/g, "-")}/${data?.ID}`
+  //     );
+  //   }, 2000); // Optional delay for visual transition
+  // }
+
+  async function navigateToBookPage() {
+    try {
+      // Trigger view count increment
+      await fetch("/api/books/increment-views", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: data?.ID }),
+      });
+    } catch (error) {
+      console.error("Failed to increment views:", error);
+      // Proceed with navigation even if update fails
+    }
+
     setIsLoading(true);
     setTimeout(() => {
       closeModal();

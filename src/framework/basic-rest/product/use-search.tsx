@@ -10,6 +10,6 @@ export const fetchSearchedProducts = async () => {
 export const useSearchQuery = (options: QueryOptionsType) => {
   return useQuery<Product[], Error>({
     queryKey: [API_ENDPOINTS.SEARCH, options],
-    queryFn: fetchSearchedProducts
+    queryFn: fetchSearchedProducts,
   });
 };

@@ -81,8 +81,6 @@ export default function BookPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const { data: session } = useSession();
 
-  console.log("currentPage", currentPage);
-
   const settings: any = {
     dots: false,
     infinite: infiniteState,
