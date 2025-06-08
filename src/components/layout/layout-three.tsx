@@ -36,7 +36,7 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
               alt: "Og Image Alt",
             },
             {
-              url: "/assets/images/og-image-02.png",
+              url: "/assets/images/og-image-01.png",
               width: 900,
               height: 800,
               alt: "Og Image Alt Second",
