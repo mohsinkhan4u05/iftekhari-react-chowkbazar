@@ -31,7 +31,7 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
             "Sufi Books , E-Books, Audio Books, Video Books, Islamic Books, Urdu Books, Hindi Books, English Books",
           images: [
             {
-              url: "/assets/images/og-image-01.png",
+              url: "https://www.silsilaeiftekhari.in/assets/images/og-image-01.png",
               width: 800,
               height: 600,
               alt: "Og Image Alt",
