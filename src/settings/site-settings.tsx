@@ -24,7 +24,7 @@ import { SunglassIcon } from "@components/icons/sunglass-icon";
 import { SneakerIcon } from "@components/icons/sneaker-icon";
 
 export const siteSettings = {
-  name: "Iftekhari Silisla",
+  name: "Iftekhari Silsila",
   description:
     "Sufi Books , Sufi Music, Sufi Videos, Sufi Poetry, Sufi Quotes, Sufi Articles",
   author: {
@@ -34,7 +34,7 @@ export const siteSettings = {
   },
   logo: {
     url: "/assets/images/logo.png",
-    alt: "Iftekhari Silisla",
+    alt: "Iftekhari Silsila",
     href: "/",
     width: 95,
     height: 30,

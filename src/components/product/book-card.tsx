@@ -119,7 +119,7 @@ const BookCard: FC<BookProps> = ({
           imageContentClassName
         )}
       >
-        <Image
+        {/* <Image
           loader={() => placeholderImage}
           src={product?.image?.thumbnail ?? placeholderImage}
           width={demoVariant === "ancient" ? 352 : Number(imgWidth)}
@@ -142,6 +142,37 @@ const BookCard: FC<BookProps> = ({
                 (variant === "gridModern" && !disableBorderRadius) ||
                 (variant === "gridModernWide" && !disableBorderRadius) ||
                 (variant === "gridTrendy" && !disableBorderRadius),
+              "rounded-md transition duration-150 ease-linear transform group-hover:scale-105":
+                variant === "gridSlim",
+              "rounded-s-md transition duration-200 ease-linear transform group-hover:scale-105":
+                variant === "list",
+            }
+          )}
+        /> */}
+
+        <Image
+          src={product?.image?.thumbnail ?? placeholderImage}
+          alt={product?.Name || "Product Image"}
+          width={demoVariant === "ancient" ? 352 : Number(imgWidth)}
+          height={demoVariant === "ancient" ? 452 : Number(imgHeight)}
+          loading={imgLoading}
+          quality={50}
+          placeholder="blur"
+          blurDataURL="/placeholder-blur.jpg" // optional
+          className={cn(
+            "bg-gray-300 object-cover",
+            !disableBorderRadius && "rounded-s-md",
+            {
+              "w-full transition duration-200 ease-in": [
+                "grid",
+                "gridModern",
+                "gridModernWide",
+                "gridTrendy",
+              ].includes(variant),
+              "rounded-md group-hover:rounded-b-none":
+                ["grid", "gridModern", "gridModernWide", "gridTrendy"].includes(
+                  variant
+                ) && !disableBorderRadius,
               "rounded-md transition duration-150 ease-linear transform group-hover:scale-105":
                 variant === "gridSlim",
               "rounded-s-md transition duration-200 ease-linear transform group-hover:scale-105":

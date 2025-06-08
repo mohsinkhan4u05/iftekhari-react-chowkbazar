@@ -44,7 +44,7 @@ const BooksBlock: React.FC<ProductsProps> = ({
   error,
   uniqueKey,
   variant = "grid",
-  limit = 10,
+  limit = 6,
   imgWidth,
   imgHeight,
   hideProductDescription = false,
@@ -75,7 +75,7 @@ const BooksBlock: React.FC<ProductsProps> = ({
               demoVariant === "ancient" ? 3 : 8
             } bg-white`,
             {
-              "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5":
+              "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6":
                 variant === "grid",
               "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4":
                 variant === "gridModernWide",

@@ -52,7 +52,7 @@ export default function Home() {
           disableBorderRadius={true}
           className={sectionCommonStyle}
           type={"popular"}
-          limit={10}
+          limit={12}
           sectionHeading={"Popular Books"}
         />
 
@@ -64,7 +64,7 @@ export default function Home() {
           disableBorderRadius={true}
           className={sectionCommonStyle}
           type={"editor-choice"}
-          limit={10}
+          limit={12}
           sectionHeading={"Editors Choice"}
         />
 
@@ -76,7 +76,7 @@ export default function Home() {
           disableBorderRadius={true}
           className={sectionCommonStyle}
           type={"new-arrival"}
-          limit={10}
+          limit={12}
           sectionHeading={"New Arrivals"}
         />
 

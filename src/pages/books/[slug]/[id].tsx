@@ -10,6 +10,7 @@ import Head from "next/head";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
 import { signIn, useSession } from "next-auth/react";
+import Image from "next/image";
 
 const SlickWithRef = forwardRef<any>((props, ref) => {
   const Slider = require("react-slick").default;
@@ -157,10 +158,19 @@ export default function BookPage() {
                       wrapperStyle={{ width: "100%" }}
                     >
                       <div className="h-[75vh] md:h-[75vh] w-full">
-                        <img
+                        {/* <img
                           className="w-full h-full object-contain"
                           src={item}
                           alt={`Page ${index + 1}`}
+                        /> */}
+                        <Image
+                          src={item}
+                          alt={`Page ${index + 1}`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 768px"
+                          style={{ objectFit: "contain" }}
+                          priority={index === 0} // Load first page eagerly
+                          quality={50}
                         />
                       </div>
                     </TransformComponent>

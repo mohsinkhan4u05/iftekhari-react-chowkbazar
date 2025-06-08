@@ -8,9 +8,14 @@ const withPWA = nextPWA({
   runtimeCaching: runtimeCache,
 });
 
-export default withPWA({
+const nextConfig = {
   i18n,
   typescript: {
     ignoreBuildErrors: true,
   },
-});
+  images: {
+    domains: ["admin.silsilaeiftekhari.in"], // ✅ Add your external image host
+  },
+};
+
+export default withPWA(nextConfig);
