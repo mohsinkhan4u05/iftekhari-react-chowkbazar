@@ -10,6 +10,15 @@ export const DefaultSeo = () => {
         type: "website",
         locale: "en_IE",
         site_name: siteSettings.name,
+        url: "https://www.silsilaeiftekhari.in", // Optional but good for SEO
+        images: [
+          {
+            url: "https://www.silsilaeiftekhari.in/assets/images/logo.png", // ✅ Replace with your actual logo URL
+            width: 1200,
+            height: 630,
+            alt: "Iftekhari Silsila Logo",
+          },
+        ],
       }}
       twitter={{
         handle: "@handle",
