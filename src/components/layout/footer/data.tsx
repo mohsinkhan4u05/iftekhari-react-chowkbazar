@@ -12,25 +12,19 @@ export const footer = {
       widgetTitle: "widget-title-social",
       lists: [
         {
-          id: 1,
+          id: 0,
           title: "link-instagram",
           path: "https://www.instagram.com/iftekhari.silsila/",
           icon: <IoLogoInstagram />,
         },
-        // {
-        //   id: 2,
-        //   title: 'link-twitter',
-        //   path: 'https://twitter.com/redqinc',
-        //   icon: <IoLogoTwitter />,
-        // },
         {
-          id: 3,
+          id: 1,
           title: "link-facebook",
           path: "https://www.facebook.com/bismil.iftekhari/",
           icon: <IoLogoFacebook />,
         },
         {
-          id: 4,
+          id: 2,
           title: "link-youtube",
           path: "https://www.youtube.com/user/silsilaiftekhari",
           icon: <IoLogoYoutube />,
@@ -142,7 +136,7 @@ export const footer = {
       lists: [
         {
           id: 1,
-          title: "tasawwuf",
+          title: "Tasawwuf",
           path: "/books?category=Tasawwuf",
         },
         {

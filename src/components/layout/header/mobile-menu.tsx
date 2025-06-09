@@ -1,47 +1,40 @@
-import { useState } from 'react';
-import Link from '@components/ui/link';
-import { siteSettings } from '@settings/site-settings';
-import Scrollbar from '@components/common/scrollbar';
-import { IoIosArrowDown } from 'react-icons/io';
-import Logo from '@components/ui/logo';
-import { useUI } from '@contexts/ui.context';
+import { useState } from "react";
+import Link from "@components/ui/link";
+import { siteSettings } from "@settings/site-settings";
+import Scrollbar from "@components/common/scrollbar";
+import { IoIosArrowDown } from "react-icons/io";
+import Logo from "@components/ui/logo";
+import { useUI } from "@contexts/ui.context";
 import {
   IoLogoInstagram,
   IoLogoTwitter,
   IoLogoFacebook,
   IoLogoYoutube,
   IoClose,
-} from 'react-icons/io5';
-import { useTranslation } from 'next-i18next';
+} from "react-icons/io5";
+import { useTranslation } from "next-i18next";
 
 const social = [
   {
     id: 0,
-    link: 'https://www.facebook.com/redqinc/',
+    link: "https://www.facebook.com/bismil.iftekhari/",
     icon: <IoLogoFacebook />,
-    className: 'facebook',
-    title: 'text-facebook',
+    className: "facebook",
+    title: "text-facebook",
   },
   {
     id: 1,
-    link: 'https://twitter.com/redqinc',
-    icon: <IoLogoTwitter />,
-    className: 'twitter',
-    title: 'text-twitter',
+    link: "https://www.youtube.com/user/silsilaiftekhari",
+    icon: <IoLogoYoutube />,
+    className: "youtube",
+    title: "text-youtube",
   },
   {
     id: 2,
-    link: 'https://www.youtube.com/channel/UCjld1tyVHRNy_pe3ROLiLhw',
-    icon: <IoLogoYoutube />,
-    className: 'youtube',
-    title: 'text-youtube',
-  },
-  {
-    id: 3,
-    link: 'https://www.instagram.com/redqinc/',
+    link: "https://www.instagram.com/iftekhari.silsila/",
     icon: <IoLogoInstagram />,
-    className: 'instagram',
-    title: 'text-instagram',
+    className: "instagram",
+    title: "text-instagram",
   },
 ];
 
@@ -49,7 +42,7 @@ export default function MobileMenu() {
   const [activeMenus, setActiveMenus] = useState<any>([]);
   const { site_header } = siteSettings;
   const { closeSidebar } = useUI();
-  const { t } = useTranslation('menu');
+  const { t } = useTranslation("menu");
   const handleArrowClick = (menuName: string) => {
     let newActiveMenus = [...activeMenus];
 
@@ -71,7 +64,7 @@ export default function MobileMenu() {
     hasSubMenu,
     menuName,
     menuIndex,
-    className = '',
+    className = "",
   }: any) =>
     data.label && (
       <li className={`mb-0.5 ${className}`}>
@@ -91,7 +84,7 @@ export default function MobileMenu() {
             >
               <IoIosArrowDown
                 className={`transition duration-200 ease-in-out transform text-heading ${
-                  activeMenus.includes(menuName) ? '-rotate-180' : 'rotate-0'
+                  activeMenus.includes(menuName) ? "-rotate-180" : "rotate-0"
                 }`}
               />
             </div>
@@ -128,7 +121,7 @@ export default function MobileMenu() {
               menuName={menuName}
               key={menuName}
               menuIndex={index}
-              className={dept > 1 && 'ltr:pl-4 rtl:pr-4'}
+              className={dept > 1 && "ltr:pl-4 rtl:pr-4"}
             />
           );
         })}

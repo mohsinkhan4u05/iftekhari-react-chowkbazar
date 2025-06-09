@@ -1,3 +1,4 @@
+// @components/search/search.tsx
 import React, { useRef, useEffect } from "react";
 import cn from "classnames";
 import SearchResultLoader from "@components/ui/loaders/search-result-loader";
@@ -11,20 +12,23 @@ import {
 } from "body-scroll-lock";
 import Scrollbar from "@components/common/scrollbar";
 import SearchProduct from "@components/common/search-product";
+import { useDebounce } from "use-debounce";
 
 export default function Search() {
   const { displaySearch, closeSearch } = useUI();
   const [searchText, setSearchText] = React.useState("");
-  const { data, isLoading } = useSearchQuery({
-    text: searchText,
-  });
+  const [debouncedSearchText] = useDebounce(searchText, 400);
+
+  const { data, isLoading } = useSearchQuery(debouncedSearchText);
 
   function handleSearch(e: React.SyntheticEvent) {
     e.preventDefault();
   }
+
   function handleAutoSearch(e: React.FormEvent<HTMLInputElement>) {
     setSearchText(e.currentTarget.value);
   }
+
   function clear() {
     setSearchText("");
   }
@@ -33,39 +37,29 @@ export default function Search() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (inputRef.current) inputRef.current.focus();
   }, []);
 
   useEffect(() => {
     if (ref.current) {
-      if (displaySearch) {
-        disableBodyScroll(ref.current);
-      } else {
-        enableBodyScroll(ref.current);
-      }
+      displaySearch
+        ? disableBodyScroll(ref.current)
+        : enableBodyScroll(ref.current);
     }
-    return () => {
-      clearAllBodyScrollLocks();
-    };
+    return () => clearAllBodyScrollLocks();
   }, [displaySearch]);
 
   return (
     <div ref={ref}>
       <div
-        className={cn("overlay", {
-          open: displaySearch,
-        })}
+        className={cn("overlay", { open: displaySearch })}
         role="button"
         onClick={closeSearch}
       />
       <div
         className={cn(
           "drawer-search relative hidden top-0 z-30 opacity-0 invisible transition duration-300 ease-in-out left-1/2 px-4 w-full md:w-[730px] lg:w-[930px]",
-          {
-            open: displaySearch,
-          }
+          { open: displaySearch }
         )}
       >
         <div className="w-full flex flex-col justify-center">
@@ -87,20 +81,17 @@ export default function Search() {
                     {isLoading ? (
                       <div className="p-5 border-b border-gray-300 border-opacity-30 last:border-b-0">
                         {Array.from({ length: 5 }).map((_, idx) => (
-                          <SearchResultLoader
-                            key={idx}
-                            uniqueKey={`top-search-${idx}`}
-                          />
+                          <SearchResultLoader key={`loader-${idx}`} />
                         ))}
                       </div>
                     ) : (
-                      data?.map((item: any, index: number) => (
+                      data?.map((item, index) => (
                         <div
-                          key={item.key}
-                          className=" p-5 border-b border-gray-150 relative last:border-b-0"
+                          key={item.BookId || index}
+                          className="p-5 border-b border-gray-150 relative last:border-b-0"
                           onClick={closeSearch}
                         >
-                          <SearchProduct item={item} key={index} />
+                          <SearchProduct item={item} />
                         </div>
                       ))
                     )}
