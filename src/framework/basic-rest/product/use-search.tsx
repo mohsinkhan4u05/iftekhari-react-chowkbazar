@@ -1,19 +1,27 @@
+// hooks/use-search.ts
 import { Product } from "@framework/types";
-import http from "@framework/utils/http";
-//import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import { useQuery } from "@tanstack/react-query";
 
-export const fetchSearchedProducts = async (searchTerm: string) => {
-  if (!searchTerm) return []; // do not fetch on empty search
-  const url = "/books/global-search";
-  const { data } = await http.get(`${url}?q=${searchTerm}`);
-  return data;
+export const fetchSearchedProducts = async ({ queryKey }: any) => {
+  const [_key, searchTerm] = queryKey;
+
+  if (!searchTerm) return [];
+
+  const url = `/api/books/global-search?q=${encodeURIComponent(searchTerm)}`;
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch search results");
+  }
+
+  const data = await res.json();
+  return data as Product[];
 };
 
 export const useSearchQuery = (searchTerm: string) => {
   return useQuery<Product[], Error>({
-    queryKey: ["/books/global-search", searchTerm],
-    queryFn: () => fetchSearchedProducts(searchTerm),
+    queryKey: ["/api/books/global-search", searchTerm],
+    queryFn: fetchSearchedProducts,
     enabled: !!searchTerm,
     staleTime: 60 * 1000,
   });

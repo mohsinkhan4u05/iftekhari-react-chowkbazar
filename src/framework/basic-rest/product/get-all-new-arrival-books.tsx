@@ -1,28 +1,24 @@
-// hooks/use-search.ts
-import { Product } from "@framework/types";
+import { QueryOptionsType, Book } from "@framework/types";
 import { useQuery } from "@tanstack/react-query";
 
-export const fetchSearchedProducts = async ({ queryKey }: any) => {
-  const [_key, searchTerm] = queryKey;
+export const fetchNewArrivalBooks = async ({ queryKey }: any) => {
+  const [_key, options] = queryKey;
+  const { limit = 10, type = "popular", offset = 0 } = options;
 
-  if (!searchTerm) return [];
+  const url = `/api/books/pagination?limit=${limit}&type=${type}&offset=${offset}`;
 
-  const url = `/api/books/global-search?q=${encodeURIComponent(searchTerm)}`;
   const res = await fetch(url);
-
   if (!res.ok) {
-    throw new Error("Failed to fetch search results");
+    throw new Error("Failed to fetch books");
   }
 
   const data = await res.json();
-  return data as Product[];
+  return data as Book[];
 };
 
-export const useSearchQuery = (searchTerm: string) => {
-  return useQuery<Product[], Error>({
-    queryKey: ["/api/books/global-search", searchTerm],
-    queryFn: fetchSearchedProducts,
-    enabled: !!searchTerm,
-    staleTime: 60 * 1000,
+export const useNewArrivalBooksQuery = (options: QueryOptionsType) => {
+  return useQuery<Book[], Error>({
+    queryKey: ["/api/books/pagination", options],
+    queryFn: fetchNewArrivalBooks,
   });
 };
