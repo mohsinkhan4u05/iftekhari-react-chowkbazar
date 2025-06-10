@@ -28,7 +28,6 @@ export const authOptions = {
           .input("email", user.email)
           .query("SELECT * FROM Iftekhari.IftekhariUsers WHERE Email = @email");
 
-        console.log("Existing user check:", existingUser.recordset);
         if (existingUser.recordset.length === 0) {
           await pool
             .request()
