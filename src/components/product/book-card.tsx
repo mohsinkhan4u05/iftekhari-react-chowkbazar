@@ -158,7 +158,7 @@ const BookCard: FC<BookProps> = ({
           loading={imgLoading}
           quality={50}
           placeholder="blur"
-          blurDataURL="/placeholder-blur.jpg" // optional
+          blurDataURL="assets/images/placeholder-blur.jpg" // optional
           className={cn(
             "bg-gray-300 object-cover",
             !disableBorderRadius && "rounded-s-md",
