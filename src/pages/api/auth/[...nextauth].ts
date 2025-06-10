@@ -51,7 +51,7 @@ export const authOptions = {
         return true;
       } catch (error) {
         console.error("Error logging login time:", error);
-        return false;
+        return true;
       }
     },
   },
