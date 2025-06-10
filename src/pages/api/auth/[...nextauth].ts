@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { getConnection } from "../../../framework/lib/db";
+import { Account, Profile, User } from "next-auth";
 
 export const authOptions = {
   providers: [
@@ -8,9 +10,50 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/auth/signin", // Optional custom page
+  callbacks: {
+    async signIn({
+      user,
+      account,
+      profile,
+    }: {
+      user: User;
+      account: Account | null;
+      profile?: Profile;
+    }): Promise<boolean> {
+      try {
+        const pool = await getConnection();
+
+        const existingUser = await pool
+          .request()
+          .input("email", user.email)
+          .query("SELECT * FROM Iftekhari.IftekhariUsers WHERE Email = @email");
+
+        if (existingUser.recordset.length === 0) {
+          await pool
+            .request()
+            .input("ProviderId", account?.providerAccountId || "")
+            .input("Name", user.name || "")
+            .input("Email", user.email || "")
+            .input("ImageUrl", user.image || "")
+            .input("LastLogin", new Date()).query(`
+              INSERT INTO Iftekhari.IftekhariUsers (ProviderId, Name, Email, ImageUrl, LastLogin)
+              VALUES (@ProviderId, @Name, @Email, @ImageUrl, @LastLogin)
+            `);
+        } else {
+          await pool
+            .request()
+            .input("email", user.email)
+            .input("LastLogin", new Date()).query(`
+              UPDATE Iftekhari.IftekhariUsers SET LastLogin = @LastLogin WHERE Email = @email
+            `);
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Error logging login time:", error);
+        return false;
+      }
+    },
   },
 };
 
