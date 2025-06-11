@@ -99,7 +99,7 @@ export type Product = {
   isNewArrival?: boolean;
 };
 export type Book = {
-  ID: number | string;
+  ID: number;
   Name: string;
   Author: string;
   ImagePath: string;
