@@ -4,13 +4,11 @@ import type { FC } from "react";
 import { useUI } from "@contexts/ui.context";
 import usePrice from "@framework/product/use-price";
 import { Book } from "@framework/types";
-// import ProductIcon1 from '../../../public/assets/images/products/icons/product-icon1.svg'
-// import ProductIcon2 from '../../../public/assets/images/products/icons/product-icon2.svg'
-// import ProductIcon3 from '../../../public/assets/images/products/icons/product-icon3.svg'
 import ProductViewIcon from "@components/icons/product-view-icon";
 import ProductWishIcon from "@components/icons/product-wish-icon";
 import ProductCompareIcon from "@components/icons/product-compare-icon";
 import RatingDisplay from "@components/common/rating-display";
+import BookmarkButton from "@components/ui/bookmark-button";
 
 interface BookProps {
   product: Book;
@@ -48,16 +46,12 @@ const BookCard: FC<BookProps> = ({
   imgWidth = 340,
   imgHeight = 440,
   imgLoading,
-  hideProductDescription = false,
-  showCategory = false,
-  showRating = false,
   bgTransparent = false,
   bgGray = false,
   demoVariant,
   disableBorderRadius = false,
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
-  //const placeholderImage = `/assets/placeholder/products/product-${variant}.svg`;
   const placeholderImage = `https://admin.silsilaeiftekhari.in/${product?.ImagePath}`;
   const { price, basePrice, discount } = usePrice({
     amount: product.sale_price ? product.sale_price : product.price,
@@ -103,6 +97,8 @@ const BookCard: FC<BookProps> = ({
       role="button"
       title={product?.Name}
     >
+      {/* Bookmark button positioned top-right */}
+
       <div
         className={cn(
           "flex",
@@ -119,37 +115,6 @@ const BookCard: FC<BookProps> = ({
           imageContentClassName
         )}
       >
-        {/* <Image
-          loader={() => placeholderImage}
-          src={product?.image?.thumbnail ?? placeholderImage}
-          width={demoVariant === "ancient" ? 352 : Number(imgWidth)}
-          height={demoVariant === "ancient" ? 452 : Number(imgHeight)}
-          loading={imgLoading}
-          quality={100}
-          alt={product?.Name || "Product Image"}
-          className={cn(
-            `bg-gray-300 object-cover ${
-              !disableBorderRadius && "rounded-s-md"
-            }`,
-            {
-              "w-full transition duration-200 ease-in":
-                variant === "grid" ||
-                variant === "gridModern" ||
-                variant === "gridModernWide" ||
-                variant === "gridTrendy",
-              "rounded-md group-hover:rounded-b-none":
-                (variant === "grid" && !disableBorderRadius) ||
-                (variant === "gridModern" && !disableBorderRadius) ||
-                (variant === "gridModernWide" && !disableBorderRadius) ||
-                (variant === "gridTrendy" && !disableBorderRadius),
-              "rounded-md transition duration-150 ease-linear transform group-hover:scale-105":
-                variant === "gridSlim",
-              "rounded-s-md transition duration-200 ease-linear transform group-hover:scale-105":
-                variant === "list",
-            }
-          )}
-        /> */}
-
         <Image
           src={product?.image?.thumbnail ?? placeholderImage}
           alt={product?.Name || "Product Image"}
@@ -273,35 +238,15 @@ const BookCard: FC<BookProps> = ({
         >
           {product?.Name}
         </h2>
-        {/* {!!(showCategory || showRating) && (
-          <div className="flex flex-col md:flex-row md:items-center lg:flex-row xl:flex-row 2xl:flex-row  mb-0.5 items-start">
-            {!!showCategory && (
-              <h3
-                className={cn(
-                  "font-semibold text-sm mb-1 md:mb-0 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3",
-                  {
-                    "text-white": bgTransparent,
-                    "text-black/70": !bgTransparent,
-                  }
-                )}
-              >
-                Category
-              </h3>
-            )}
-            {!!showRating && <RatingDisplay rating={2.5} />}
-          </div>
-        )} */}
 
-        {/* {!hideProductDescription && product?.description && (
-          <p className="text-body text-xs lg:text-sm leading-normal xl:leading-relaxed max-w-[250px] truncate">
-            {product?.description}
-          </p>
-        )} */}
-        {/* Meta Info Section */}
         {/* Meta Info */}
         <div className="flex flex-col gap-y-1 text-xs sm:text-sm text-gray-700">
           {/* Author */}
           {product?.Author && <p className="truncate mb-1">{product.Author}</p>}
+
+          {/* <div onClick={(e) => e.stopPropagation()}>
+            <BookmarkButton bookId={product.ID} />
+          </div> */}
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-4 mb-1">
             {product?.TotalPages && (
@@ -354,6 +299,13 @@ const BookCard: FC<BookProps> = ({
 
           {/* Category + Language */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-x-4 text-black">
+            <span
+              className="flex items-center gap-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <BookmarkButton bookId={product.ID} />
+              Wishlist
+            </span>
             {product?.CategoryName && (
               <span className="flex items-center gap-1 mb-1 sm:mb-0">
                 {/* Tag icon */}
@@ -377,27 +329,6 @@ const BookCard: FC<BookProps> = ({
                   />
                 </svg>
                 {product.CategoryName}
-              </span>
-            )}
-
-            {product?.Language && (
-              <span className="flex items-center gap-1">
-                {/* Globe icon for language */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-black"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 3C7.029 3 3 7.029 3 12s4.029 9 9 9 9-4.029 9-9-4.029-9-9-9zm0 0c0 2.5 1.5 6 3 6s3-3.5 3-6m-6 0C9 3 7.5 6.5 7.5 9s1.5 6 3 6m0 0c-2.5 0-6-1.5-6-3s3.5-3 6-3m0 6c2.5 0 6-1.5 6-3s-3.5-3-6-3"
-                  />
-                </svg>
-                {product.Language}
               </span>
             )}
           </div>
