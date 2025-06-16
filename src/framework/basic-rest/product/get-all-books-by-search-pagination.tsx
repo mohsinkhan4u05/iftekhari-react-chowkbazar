@@ -1,8 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
-import http from "@framework/utils/http";
 import { Book } from "@framework/types";
-// import shuffle from "lodash/shuffle"; // Optional if you need random order
 
 export type BookResponse = {
   data: Book[];
