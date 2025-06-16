@@ -11,7 +11,7 @@ export default function Wishlist() {
     <Container>
       <div className={`flex pt-8 pb-16 lg:pb-20`}>
         <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
-          <SearchTopBar />
+          {/* <SearchTopBar /> */}
           <WishListSearchGridPagination />
         </div>
       </div>

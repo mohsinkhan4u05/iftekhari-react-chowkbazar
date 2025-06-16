@@ -36,8 +36,8 @@ const BookmarkButton = ({ bookId }: { bookId: number }) => {
 
       toast(
         bookmarked
-          ? "Added to the watchlist !!!"
-          : "Removed from the watchlist !!!",
+          ? "Added to the wishlist !!!"
+          : "Removed from the wishlist !!!",
         {
           //    progressClassName: "fancy-success-bar",
           position: "top-center",
@@ -59,7 +59,7 @@ const BookmarkButton = ({ bookId }: { bookId: number }) => {
   return (
     <button
       onClick={toggleBookmark}
-      title={isBookmarked ? "Remove from watchlist" : "Add to watchlist"}
+      title={isBookmarked ? "Remove from wishlist" : "Add to wishlist"}
       className="text-red-500 text-xl hover:scale-110 transition-transform duration-150"
     >
       {isBookmarked ? <FaHeart /> : <FaRegHeart />}
