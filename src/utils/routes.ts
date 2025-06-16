@@ -20,4 +20,5 @@ export const ROUTES = {
   ORDER: "/order",
   BOOK: `/books`,
   BOOK_CATEGORY: "/books/category",
+  WISHLIST: "/wishlist",
 };

@@ -3,7 +3,6 @@ import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
 import { ShopFilters } from "@components/shop/filters";
 import StickyBox from "react-sticky-box";
-//import { BookSearchGrid } from "@components/product/book-search-grid";
 import { BookSearchGridPagination } from "@components/product/book-search-grid-pagination";
 import SearchTopBar from "@components/shop/top-bar";
 import ActiveLink from "@components/ui/active-link";

@@ -651,6 +651,11 @@ export const siteSettings = {
         path: "/books",
         label: "menu-book",
       },
+      {
+        id: 2,
+        path: "/wishlist",
+        label: "My Wishlist",
+      },
       // {
       //   id: 5,
       //   path: "/shops",
