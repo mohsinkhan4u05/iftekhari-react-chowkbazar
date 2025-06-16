@@ -809,6 +809,11 @@ export const siteSettings = {
         path: "/books",
         label: "menu-book",
       },
+      {
+        id: 3,
+        path: "/wishlist",
+        label: "My Wishlist",
+      },
       // {
       //   id: 2,
       //   path: "/search?q=men-wear",
