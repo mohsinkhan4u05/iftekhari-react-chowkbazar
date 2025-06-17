@@ -71,6 +71,9 @@ dependencies:
   overlayscrollbars-react:
     specifier: 0.5.6
     version: 0.5.6(overlayscrollbars@2.10.1)(react@19.0.0)
+  pinch-zoom-js:
+    specifier: ^2.3.5
+    version: 2.3.5
   rc-drawer:
     specifier: 7.2.0
     version: 7.2.0(react-dom@19.0.0)(react@19.0.0)
@@ -5694,6 +5697,10 @@ packages:
   /pify@4.0.1:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
+    dev: false
+
+  /pinch-zoom-js@2.3.5:
+    resolution: {integrity: sha512-/fydIbmKTbVFINRTd/YytTADpmUBX54K+UEjpACiFN7JT1PkzffcZak8Mabx8o0hbzTsYmaDRmN/89t2U55oTw==}
     dev: false
 
   /pinkie-promise@2.0.1:
