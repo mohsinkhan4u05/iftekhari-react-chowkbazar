@@ -68,7 +68,7 @@ export const WishListSearchGridPagination: FC<ProductGridProps> = ({
           </Button>
         </div>
       )}
-      {session && wishlist.length === 0 && (
+      {session && wishlist.length === 0 && !loading && (
         <div className="flex items-center justify-center h-64">
           <p className="text-lg text-gray-500">
             Your wishlist is empty. Start adding books to your wishlist!

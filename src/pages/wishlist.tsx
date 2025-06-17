@@ -4,7 +4,7 @@ import Subscription from "@components/common/subscription";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
 import { WishListSearchGridPagination } from "@components/product/wishlist-search-grid-pagination";
-import SearchTopBar from "@components/shop/top-bar";
+import Text from "@components/ui/text";
 
 export default function Wishlist() {
   return (
@@ -12,6 +12,9 @@ export default function Wishlist() {
       <div className={`flex pt-8 pb-16 lg:pb-20`}>
         <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
           {/* <SearchTopBar /> */}
+          <Text variant="pageHeading" className="lg:inline-flex pb-3">
+            My Wishlist
+          </Text>
           <WishListSearchGridPagination />
         </div>
       </div>
