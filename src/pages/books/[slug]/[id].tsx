@@ -80,6 +80,7 @@ export default function BookPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const { data: session } = useSession();
+  const [bookmarkPage, setBookmarkPage] = useState<number | null>(null);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -106,7 +107,18 @@ export default function BookPage() {
     touchMove: true,
     swipeToSlide: true,
     arrows: !isMobile, // 👈 only show arrows on desktop
-    afterChange: (index: number) => setCurrentSlide(index),
+    afterChange: async (index: number) => {
+      setCurrentSlide(index);
+
+      // Save bookmark for logged-in user
+      if (session?.user?.email) {
+        await fetch(`/api/bookmarks/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ page: index }),
+        });
+      }
+    },
     beforeChange: (_oldIndex: number, newIndex: number) => {
       setCurrentPage(newIndex);
     },
@@ -120,6 +132,14 @@ export default function BookPage() {
       if (res.ok) {
         setInfinite(data?.Images?.length > 3);
         setBook(data);
+
+        // Fetch bookmark only after book data is available
+        const bookmarkRes = await fetch(`/api/bookmarks/${id}`);
+        const bookmarkData = await bookmarkRes.json();
+
+        if (bookmarkRes.ok) {
+          setBookmarkPage(bookmarkData.page ?? 0);
+        }
       } else {
         console.error("Failed to fetch book info:", data.error);
       }
@@ -127,6 +147,31 @@ export default function BookPage() {
       console.error("Error fetching book info:", error);
     }
   };
+
+  useEffect(() => {
+    if (
+      bookmarkPage !== null &&
+      sliderRef.current &&
+      book?.Images?.length > 0
+    ) {
+      sliderRef.current.slickGoTo(bookmarkPage);
+      setCurrentSlide(bookmarkPage);
+      setCurrentPage(bookmarkPage);
+    }
+  }, [bookmarkPage, book?.Images]);
+
+  useEffect(() => {
+    if (id && session) {
+      fetch(`/api/bookmarks/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (sliderRef.current && data?.page >= 0) {
+            setCurrentPage(data.page);
+            sliderRef.current.slickGoTo(data.page);
+          }
+        });
+    }
+  }, [id, session]);
 
   useEffect(() => {
     if (id) {
@@ -217,6 +262,24 @@ export default function BookPage() {
                     </option>
                   ))}
                 </select>
+                {/* {session && (
+                  <div className="text-center mt-4">
+                    <button
+                      onClick={async () => {
+                        const res = await fetch(`/api/bookmarks/${id}`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ page: currentSlide }),
+                        });
+                        if (res.ok) alert("📌 Bookmark saved!");
+                        else alert("Failed to save bookmark");
+                      }}
+                      className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                    >
+                      Save Bookmark
+                    </button>
+                  </div>
+                )} */}
               </div>
             )}
           </>
