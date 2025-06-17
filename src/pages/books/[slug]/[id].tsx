@@ -11,6 +11,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import styled from "styled-components";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
+import PinchZoomWrapper from "../../../components/common/zoom/pinch-zoom-wrapper";
 
 const SlickWithRef = forwardRef<any>((props, ref) => {
   const Slider = require("react-slick").default;
@@ -24,7 +25,7 @@ const Wrapper = styled.div`
   .slick-list,
   .slick-track,
   .slick-slide > div {
-    height: 100%; /* 👈 ensures all internal slider elements take full height */
+    height: 100%;
   }
   .slick-prev,
   .slick-next {
@@ -44,13 +45,12 @@ const Wrapper = styled.div`
     img {
       width: 24px;
       height: 24px;
-      filter: invert(1); /* make arrow white */
+      filter: invert(1);
     }
   }
 
   .slick-prev {
     left: 16px;
-
     @media (max-width: 768px) {
       left: 8px;
     }
@@ -58,16 +58,15 @@ const Wrapper = styled.div`
 
   .slick-next {
     right: 16px;
-
     @media (max-width: 768px) {
       right: 8px;
     }
   }
 
   @media (max-width: 768px) {
-    .slick-prev img,
-    .slick-next img {
-      display: none;
+    .slick-prev,
+    .slick-next {
+      display: none !important;
     }
   }
 `;
@@ -82,6 +81,18 @@ export default function BookPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const { data: session } = useSession();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const settings: any = {
     dots: false,
     infinite: infiniteState,
@@ -94,10 +105,10 @@ export default function BookPage() {
     swipe: true,
     touchMove: true,
     swipeToSlide: true,
-    arrows: true, // make sure it's not false
+    arrows: !isMobile, // 👈 only show arrows on desktop
     afterChange: (index: number) => setCurrentSlide(index),
-    beforeChange: (oldIndex: number, newIndex: number) => {
-      setCurrentPage(newIndex); // update dropdown when slider changes
+    beforeChange: (_oldIndex: number, newIndex: number) => {
+      setCurrentPage(newIndex);
     },
   };
 
@@ -124,7 +135,7 @@ export default function BookPage() {
   }, [id]);
 
   useEffect(() => {
-    if (currentPage > 5 && !session) {
+    if (currentPage > 4 && !session) {
       signIn("google");
     }
   }, [currentPage]);
@@ -148,38 +159,50 @@ export default function BookPage() {
                   key={index}
                   className="w-screen h-screen flex justify-center items-center"
                 >
-                  <TransformWrapper
-                    pinch={{ disabled: false }}
-                    doubleClick={{ disabled: false }}
-                    wheel={{ disabled: false }}
-                  >
-                    <TransformComponent
-                      contentStyle={{ width: "100%" }}
-                      wrapperStyle={{ width: "100%" }}
-                    >
-                      <div className="h-[75vh] md:h-[75vh] w-full">
-                        {/* <img
-                          className="w-full h-full object-contain"
-                          src={item}
-                          alt={`Page ${index + 1}`}
-                        /> */}
+                  {isMobile ? (
+                    // ✅ Show plain image with swipe enabled
+                    <PinchZoomWrapper>
+                      <div className="relative h-[75vh] w-full">
                         <Image
                           src={item}
                           alt={`Page ${index + 1}`}
                           fill
                           sizes="(max-width: 768px) 100vw, 768px"
                           style={{ objectFit: "contain" }}
-                          priority={index === 0} // Load first page eagerly
+                          priority={index === 0}
                           quality={50}
                         />
                       </div>
-                    </TransformComponent>
-                  </TransformWrapper>
+                    </PinchZoomWrapper>
+                  ) : (
+                    // ✅ Enable zoom only on desktop
+                    <TransformWrapper
+                      pinch={{ disabled: false }}
+                      doubleClick={{ disabled: false }}
+                      wheel={{ disabled: false }}
+                    >
+                      <TransformComponent
+                        contentStyle={{ width: "100%", height: "100%" }}
+                        wrapperStyle={{ width: "100%", height: "100%" }}
+                      >
+                        <div className="relative h-[75vh] w-full">
+                          <Image
+                            src={item}
+                            alt={`Page ${index + 1}`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 768px"
+                            style={{ objectFit: "contain" }}
+                            priority={index === 0}
+                            quality={50}
+                          />
+                        </div>
+                      </TransformComponent>
+                    </TransformWrapper>
+                  )}
                 </div>
               ))}
             </SlickWithRef>
-            {/* Move this into safe visible zone */}
-            {/* Dropdown for pagination */}
+
             {book.Images && book.Images.length > 1 && (
               <div className="mt-4 px-4 flex justify-center">
                 <select

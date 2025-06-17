@@ -306,31 +306,6 @@ const BookCard: FC<BookProps> = ({
               <BookmarkButton bookId={product.ID} />
               Wishlist
             </span>
-            {product?.CategoryName && (
-              <span className="flex items-center gap-1 mb-1 sm:mb-0">
-                {/* Tag icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-black"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7 7a2 2 0 114 0 2 2 0 01-4 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5.5 10.5L19 4l1.5 1.5L7 19 5.5 17.5z"
-                  />
-                </svg>
-                {product.CategoryName}
-              </span>
-            )}
           </div>
         </div>
 
