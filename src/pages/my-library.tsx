@@ -5,6 +5,8 @@ import Layout from "@components/layout/layout";
 import { signIn, useSession } from "next-auth/react";
 import { ImGoogle2 } from "react-icons/im";
 import Button from "@components/ui/button";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { GetStaticProps } from "next";
 
 export default function MyLibraryPage() {
   const [activeTab, setActiveTab] = useState<"wishlist" | "bookmarks">(
@@ -14,25 +16,25 @@ export default function MyLibraryPage() {
   const { data: session } = useSession();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white px- py-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-8">
       <h1 className="text-3xl font-semibold mb-6 text-center">My Library</h1>
-
       {!session && (
-        <div className="w-full px-5 py-5 mx-auto overflow-hidden bg-white border border-gray-300 rounded-lg sm:w-96 md:w-450px sm:px-8">
-          <div className="text-center mb-6 pt-2.5">
-            <p className="mt-2 mb-8 text-sm md:text-base text-body sm:mb-10">
-              Please login to view your wishlist.
-            </p>
-          </div>
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="w-full px-5 py-5 mx-auto overflow-hidden bg-white border border-gray-300 rounded-lg sm:w-96 md:w-450px sm:px-8">
+            <div className="text-center mb-6 pt-2.5">
+              <p className="mt-2 mb-8 text-sm md:text-base text-body sm:mb-10">
+                Please login to view your library.
+              </p>
+            </div>
 
-          <Button
-            className="h-11 md:h-12 w-full mt-2.5 bg-google hover:bg-googleHover"
-            //onClick={handelSocialLogin}
-            onClick={() => signIn("google")}
-          >
-            <ImGoogle2 className="text-sm sm:text-base ltr:mr-1.5 rtl:ml-1.5" />
-            Login with Google
-          </Button>
+            <Button
+              className="h-11 md:h-12 w-full mt-2.5 bg-google hover:bg-googleHover"
+              onClick={() => signIn("google")}
+            >
+              <ImGoogle2 className="text-sm sm:text-base ltr:mr-1.5 rtl:ml-1.5" />
+              Login with Google
+            </Button>
+          </div>
         </div>
       )}
 
@@ -70,3 +72,16 @@ export default function MyLibraryPage() {
 }
 
 MyLibraryPage.Layout = Layout;
+
+export const getStaticProps: GetStaticProps = async ({ locale }: any) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale!, [
+        "common",
+        "forms",
+        "menu",
+        "footer",
+      ])),
+    },
+  };
+};
