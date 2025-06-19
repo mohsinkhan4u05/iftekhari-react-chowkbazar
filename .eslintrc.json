@@ -3,6 +3,6 @@
   "rules": {
     "react/display-name": "off",
     "@typescript-eslint/no-unused-vars": "off",  // ✅ disable unused vars for TS
-    "no-unused-vars": "off",                     // ✅ disable for JS too (if using JS files)
+    "no-unused-vars": "off"                   // ✅ disable for JS too (if using JS files)
   }
 }
