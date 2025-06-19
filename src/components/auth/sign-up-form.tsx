@@ -9,13 +9,13 @@ import { ImGoogle2, ImFacebook2 } from "react-icons/im";
 import Link from "@components/ui/link";
 import { ROUTES } from "@utils/routes";
 import { useTranslation } from "next-i18next";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 const SignUpForm: React.FC = () => {
   const { t } = useTranslation();
   const { mutate: signUp, isPending } = useSignUpMutation();
   const { setModalView, openModal, closeModal } = useUI();
-  const { data: session } = useSession();
+
   const {
     register,
     handleSubmit,
