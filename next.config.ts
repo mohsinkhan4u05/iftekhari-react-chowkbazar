@@ -10,11 +10,18 @@ const withPWA = nextPWA({
 
 const nextConfig = {
   i18n,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    domains: ["admin.silsilaeiftekhari.in"], // ✅ Add your external image host
+    domains: ["admin.silsilaeiftekhari.in"],
+    minimumCacheTTL: 2678400, // ✅ 31 days
+    formats: ["image/webp"], // ✅ limits transformation formats
+    deviceSizes: [640, 768, 828],
+    imageSizes: [300, 600],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "admin.silsilaeiftekhari.in",
+      },
+    ],
   },
 };
 

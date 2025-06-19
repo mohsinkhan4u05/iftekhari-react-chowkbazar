@@ -216,6 +216,7 @@ export default function BookPage() {
                           style={{ objectFit: "contain" }}
                           priority={index === 0}
                           quality={50}
+                          unoptimized
                         />
                       </div>
                     </PinchZoomWrapper>
@@ -239,6 +240,7 @@ export default function BookPage() {
                             style={{ objectFit: "contain" }}
                             priority={index === 0}
                             quality={50}
+                            unoptimized
                           />
                         </div>
                       </TransformComponent>
@@ -262,24 +264,6 @@ export default function BookPage() {
                     </option>
                   ))}
                 </select>
-                {/* {session && (
-                  <div className="text-center mt-4">
-                    <button
-                      onClick={async () => {
-                        const res = await fetch(`/api/bookmarks/${id}`, {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ page: currentSlide }),
-                        });
-                        if (res.ok) alert("📌 Bookmark saved!");
-                        else alert("Failed to save bookmark");
-                      }}
-                      className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
-                    >
-                      Save Bookmark
-                    </button>
-                  </div>
-                )} */}
               </div>
             )}
           </>
