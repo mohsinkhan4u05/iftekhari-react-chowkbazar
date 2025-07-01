@@ -19,6 +19,10 @@ export default async function handler(
 
   const userEmail = session.user.email;
 
+  if (!bookId) {
+    return res.status(400).json({ message: "Missing bookId" });
+  }
+
   try {
     const pool = await getConnection();
 
@@ -44,24 +48,26 @@ export default async function handler(
         .request()
         .input("UserEmail", userEmail)
         .input("BookId", bookId).query(`
-          SELECT 1 
+          SELECT Page 
           FROM Iftekhari.BookmarkPage
           WHERE userEmail = @UserEmail AND bookId = @BookId
         `);
 
-      if (checkResult.recordset.length > 0) {
-        // Update bookmark
-        await pool
-          .request()
-          .input("UserEmail", userEmail)
-          .input("BookId", bookId)
-          .input("Page", page).query(`
-            UPDATE Iftekhari.BookmarkPage
-            SET Page = @Page, UpdatedAt = GETDATE()
-            WHERE userEmail = @UserEmail AND bookId = @BookId
-          `);
+      const existingPage = checkResult.recordset[0]?.Page;
+
+      if (existingPage !== undefined) {
+        if (existingPage !== page) {
+          await pool
+            .request()
+            .input("UserEmail", userEmail)
+            .input("BookId", bookId)
+            .input("Page", page).query(`
+              UPDATE Iftekhari.BookmarkPage
+              SET Page = @Page, UpdatedAt = GETDATE()
+              WHERE userEmail = @UserEmail AND bookId = @BookId
+            `);
+        }
       } else {
-        // Insert new bookmark
         await pool
           .request()
           .input("UserEmail", userEmail)
@@ -71,6 +77,16 @@ export default async function handler(
             VALUES (@UserEmail, @BookId, @Page, GETDATE(), GETDATE())
           `);
       }
+
+      return res.status(200).json({ success: true });
+    }
+
+    if (method === "DELETE") {
+      await pool.request().input("UserEmail", userEmail).input("BookId", bookId)
+        .query(`
+          DELETE FROM Iftekhari.BookmarkPage
+          WHERE userEmail = @UserEmail AND bookId = @BookId
+        `);
 
       return res.status(200).json({ success: true });
     }
