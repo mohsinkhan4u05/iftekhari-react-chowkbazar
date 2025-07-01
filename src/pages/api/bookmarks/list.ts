@@ -18,11 +18,17 @@ export default async function handler(
 
     const result = await pool.request().input("UserEmail", session.user.email)
       .query(`
-        SELECT 
-          bm.bookId, bm.page, b.Name, b.Author, b.ImagePath AS Thumbnail
+      SELECT 
+        bm.bookId, bm.page, b.Name, b.Author, b.ImagePath AS Thumbnail
         FROM Iftekhari.BookmarkPage bm
         INNER JOIN Iftekhari.Book b ON b.ID = bm.bookId
-        ORDER BY bm.UpdatedAt DESC
+        WHERE bm.userEmail = @UserEmail
+         AND bm.UpdatedAt = (
+          SELECT MAX(UpdatedAt) 
+          FROM Iftekhari.BookmarkPage 
+          WHERE userEmail = bm.userEmail AND bookId = bm.bookId
+    )
+    ORDER BY bm.UpdatedAt DESC
       `);
 
     res.status(200).json(result.recordset);

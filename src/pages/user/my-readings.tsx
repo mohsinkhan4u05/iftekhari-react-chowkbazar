@@ -6,6 +6,7 @@ import Layout from "@components/layout/layout";
 import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Text from "@components/ui/text";
+import { toast } from "react-toastify";
 
 export default function MyReadings() {
   const { data: session } = useSession();
@@ -20,21 +21,46 @@ export default function MyReadings() {
     }
   }, [session]);
 
+  const handleRemoveBookmark = async (bookId: string) => {
+    try {
+      const res = await fetch(`/api/bookmarks/${bookId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setBookmarks((prev) => prev.filter((b) => b.bookId !== bookId));
+        toast.success("Bookmark removed successfully ✅");
+      } else {
+        toast.error("Failed to remove bookmark ❌");
+      }
+    } catch (error) {
+      console.error("Error while removing bookmark:", error);
+      toast.error("Something went wrong while deleting ❌");
+    }
+  };
+
   if (!session) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-8 text-center text-gray-700 dark:text-gray-300">
         Please log in to see your bookmarks.
       </div>
     );
   }
 
   if (bookmarks.length === 0) {
-    return <div className="p-8 text-center">No bookmarks found.</div>;
+    return (
+      <div className="p-8 text-center text-gray-700 dark:text-gray-300">
+        No bookmarks found.
+      </div>
+    );
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <Text variant="pageHeading" className="lg:inline-flex pb-3">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <Text
+        variant="pageHeading"
+        className="pb-6 text-3xl font-bold text-gray-800 dark:text-white"
+      >
         My Readings
       </Text>
 
@@ -42,30 +68,43 @@ export default function MyReadings() {
         {bookmarks.map((bookmark: any) => (
           <div
             key={bookmark.bookId}
-            className="bg-white dark:bg-gray-800 border rounded-xl p-4 shadow-sm hover:shadow-md transition flex gap-4"
+            className="flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md hover:shadow-lg transition-all overflow-hidden"
           >
-            <div className="w-24 h-32 relative flex-shrink-0">
+            <div className="relative w-full h-52">
               <Image
                 src={`https://admin.silsilaeiftekhari.in/${bookmark.Thumbnail}`}
                 alt={bookmark.Name}
                 fill
-                className="object-cover rounded"
+                className="object-cover"
               />
             </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold">{bookmark.Name}</h2>
-              <p className="truncate mb-1 text-sm text-gray-600 dark:text-gray-300">
+            <div className="flex flex-col flex-grow px-4 py-3">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 truncate">
+                {bookmark.Name}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
                 Author: {bookmark.Author}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Saved Page: {bookmark.page + 1}
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Saved Page:{" "}
+                <span className="font-medium">{bookmark.page + 1}</span>
               </p>
-              <Link
-                href={`/books/${bookmark.Name}/${bookmark.bookId}`}
-                className="inline-block mt-2 text-blue-600 hover:underline"
-              >
-                ➡️ Continue Reading
-              </Link>
+              <div className="flex justify-end gap-4 mt-4">
+                <Link
+                  href={`/books/${bookmark.Name}/${bookmark.bookId}`}
+                  className="text-blue-600 hover:underline text-sm flex items-center gap-1"
+                  title="Continue Reading"
+                >
+                  📖 Continue
+                </Link>
+                <button
+                  onClick={() => handleRemoveBookmark(bookmark.bookId)}
+                  className="text-red-500 hover:underline text-sm flex items-center gap-1"
+                  title="Remove Bookmark"
+                >
+                  🗑️ Remove
+                </button>
+              </div>
             </div>
           </div>
         ))}
