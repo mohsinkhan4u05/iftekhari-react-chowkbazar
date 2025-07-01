@@ -21,6 +21,7 @@ const SearchProduct: React.FC<SearchProductProps> = ({ item }) => {
           loading="eager"
           alt={item?.Name || "Product Image"}
           className="object-cover bg-gray-200"
+          unoptimized
         />
       </div>
       <div className="flex flex-col w-full overflow-hidden">
