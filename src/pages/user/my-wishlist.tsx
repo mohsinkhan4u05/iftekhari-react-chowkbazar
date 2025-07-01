@@ -12,9 +12,6 @@ export default function MyWishlist() {
       <div className={`flex pt-8 pb-16 lg:pb-20`}>
         <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
           {/* <SearchTopBar /> */}
-          {/* <Text variant="pageHeading" className="lg:inline-flex pb-3">
-            My Wishlist
-          </Text> */}
           <Text
             variant="pageHeading"
             className="pb-6 text-3xl font-bold text-gray-800 dark:text-white"
