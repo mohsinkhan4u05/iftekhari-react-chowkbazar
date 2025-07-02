@@ -30,6 +30,7 @@ import "@styles/swiper-carousel.css";
 import "@styles/custom-plugins.css";
 import "@styles/tailwind.css";
 import "@styles/rc-drawer.css";
+import "@styles/editor.css";
 import { getDirection } from "@utils/get-direction";
 import { BookCountProvider } from "@contexts/book/book-count.context";
 import { SessionProvider } from "next-auth/react";

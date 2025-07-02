@@ -9,16 +9,19 @@ import Text from "@components/ui/text";
 export default function MyWishlist() {
   return (
     <Container>
-      <div className={`flex pt-8 pb-16 lg:pb-20`}>
-        <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
-          {/* <SearchTopBar /> */}
+      <div className="flex pt-8 pb-16 lg:pb-20">
+        <div className="w-full">
           <Text
             variant="pageHeading"
             className="pb-6 text-3xl font-bold text-gray-800 dark:text-white"
           >
             My Wishlist
           </Text>
-          <WishListSearchGridPagination />
+
+          {/* Wishlist Grid */}
+          <div className="bg-white dark:bg-gray-900 rounded-xl p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <WishListSearchGridPagination />
+          </div>
         </div>
       </div>
       <Subscription />
