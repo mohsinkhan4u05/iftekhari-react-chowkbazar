@@ -76,6 +76,7 @@ export default function MyReadings() {
                 alt={bookmark.Name}
                 fill
                 className="object-cover"
+                unoptimized
               />
             </div>
             <div className="flex flex-col flex-grow px-4 py-3">

@@ -59,6 +59,7 @@ const Card: React.FC<Props> = ({
               !disableBorderRadius &&
               (variant === "rounded" ? "rounded-md" : "rounded-full")
             }`}
+            unoptimized
           />
         </div>
         {effectActive === true && (
