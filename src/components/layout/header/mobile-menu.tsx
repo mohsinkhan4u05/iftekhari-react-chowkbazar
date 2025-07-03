@@ -13,6 +13,15 @@ import {
   IoClose,
 } from "react-icons/io5";
 import { useTranslation } from "next-i18next";
+import { useSession } from "next-auth/react";
+import { 
+  FiSettings, 
+  FiEdit3, 
+  FiPlus, 
+  FiList,
+  FiFileText,
+  FiChevronRight
+} from "react-icons/fi";
 
 const social = [
   {
@@ -43,6 +52,7 @@ export default function MobileMenu() {
   const { site_header } = siteSettings;
   const { closeSidebar } = useUI();
   const { t } = useTranslation("menu");
+  const { data: session } = useSession();
   const handleArrowClick = (menuName: string) => {
     let newActiveMenus = [...activeMenus];
 
@@ -162,6 +172,75 @@ export default function MobileMenu() {
                   />
                 );
               })}
+              
+              {/* Admin Menu Section - Only show for admin users */}
+              {session?.user?.email && session.user?.role === 'admin' && (
+                <>
+                  {/* Divider */}
+                  <li className="border-t border-gray-200 dark:border-gray-600 my-3 mx-5"></li>
+                  
+                  {/* Admin Section Header */}
+                  <li className="mb-0.5">
+                    <div className="flex items-center gap-3 py-3 ltr:pl-5 rtl:pr-5 ltr:md:pl-6 rtl:md:pr-6">
+                      <FiSettings className="w-5 h-5 text-accent" />
+                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        Admin Panel
+                      </span>
+                    </div>
+                  </li>
+                  
+                  {/* Manage Blogs */}
+                  <li className="mb-0.5">
+                    <Link
+                      href="/admin/blogs"
+                      className="flex items-center justify-between py-3 ltr:pl-8 rtl:pr-8 ltr:md:pl-10 rtl:md:pr-10 ltr:pr-4 rtl:pl-4 text-[15px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiList className="w-4 h-4 text-gray-500" />
+                        <div>
+                          <div className="font-medium text-gray-900 dark:text-white">Manage Blogs</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">View, edit & delete</div>
+                        </div>
+                      </div>
+                      <FiChevronRight className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  </li>
+                  
+                  {/* Create New Blog */}
+                  <li className="mb-0.5">
+                    <Link
+                      href="/admin/blogs/create"
+                      className="flex items-center justify-between py-3 ltr:pl-8 rtl:pr-8 ltr:md:pl-10 rtl:md:pr-10 ltr:pr-4 rtl:pl-4 text-[15px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiPlus className="w-4 h-4 text-gray-500" />
+                        <div>
+                          <div className="font-medium text-gray-900 dark:text-white">Create New Blog</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Write an article</div>
+                        </div>
+                      </div>
+                      <FiChevronRight className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  </li>
+                  
+                  {/* View Public Blogs */}
+                  <li className="mb-0.5">
+                    <Link
+                      href="/blogs"
+                      className="flex items-center justify-between py-3 ltr:pl-8 rtl:pr-8 ltr:md:pl-10 rtl:md:pr-10 ltr:pr-4 rtl:pl-4 text-[15px] hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiFileText className="w-4 h-4 text-gray-500" />
+                        <div>
+                          <div className="font-medium text-gray-900 dark:text-white">View Public Blogs</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">See visitor view</div>
+                        </div>
+                      </div>
+                      <FiChevronRight className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </Scrollbar>

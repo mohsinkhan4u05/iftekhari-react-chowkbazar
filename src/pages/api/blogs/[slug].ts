@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getConnection } from "../../../framework/lib/db";
+import sql from "mssql";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
-import { getConnection } from "../../../framework/lib/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,11 +13,6 @@ export default async function handler(
     method,
   } = req;
 
-  const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.email) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
   if (!slug) {
     return res.status(400).json({ message: "Missing slug" });
   }
@@ -26,52 +22,90 @@ export default async function handler(
 
     if (method === "GET") {
       const result = await pool.request().input("Slug", slug).query(`
-          SELECT * FROM Iftekhari.BlogPosts WHERE slug = @Slug
+          SELECT id, title, slug, content, summary, coverImage, author, authorEmail, category, tags, status, viewCount, commentCount, createdAt, updatedAt 
+          FROM Iftekhari.BlogPosts WHERE slug = @Slug AND deletedAt IS NULL
         `);
 
       if (result.recordset.length === 0) {
         return res.status(404).json({ message: "Not found" });
       }
 
-      return res.status(200).json(result.recordset[0]);
+      const blog = result.recordset[0];
+      
+      // Check if blog is draft and user is not admin
+      if (blog.status === 'draft') {
+        const session = await getServerSession(req, res, authOptions);
+        const isAdmin = session?.user?.email && session.user?.role === 'admin';
+        
+        if (!isAdmin) {
+          return res.status(404).json({ message: "Not found" });
+        }
+      }
+
+      return res.status(200).json(blog);
     }
 
     if (method === "POST") {
-      const { title, content, summary, coverImage, author } = req.body;
+      const {
+        title,
+        content,
+        summary,
+        coverImage,
+        author,
+        authorEmail,
+        category,
+        tags,
+        status,
+      } = req.body;
+      
+      
+      // Get session for auto-populating author data if not provided
+      const session = await getServerSession(req, res, authOptions);
+      const finalAuthor = author || session?.user?.name || session?.user?.email || 'Anonymous';
+      const finalAuthorEmail = authorEmail || session?.user?.email || '';
 
-      // Check if blog already exists
+      // Check if blog already exists (and not deleted)
       const checkResult = await pool
         .request()
-        .input("Slug", slug)
-        .query(`SELECT 1 FROM Iftekhari.BlogPosts WHERE slug = @Slug`);
+        .input("Slug", sql.NVarChar, slug)
+        .query(`SELECT 1 FROM Iftekhari.BlogPosts WHERE slug = @Slug AND deletedAt IS NULL`);
 
       if (checkResult.recordset.length > 0) {
         // Update existing blog
         await pool
           .request()
-          .input("Slug", slug)
-          .input("Title", title)
-          .input("Content", content)
-          .input("Summary", summary)
-          .input("CoverImage", coverImage)
-          .input("Author", author).query(`
+          .input("Slug", sql.NVarChar, slug)
+          .input("Title", sql.NVarChar, title)
+          .input("Content", sql.NText, content)
+          .input("Summary", sql.NVarChar, summary)
+          .input("CoverImage", sql.NVarChar, coverImage)
+          .input("Author", sql.NVarChar, finalAuthor)
+          .input("AuthorEmail", sql.NVarChar, finalAuthorEmail)
+          .input("Category", sql.NVarChar, category || null)
+          .input("Tags", sql.NVarChar, tags ? JSON.stringify(tags) : null)
+          .input("Status", sql.NVarChar, status || "draft").query(`
             UPDATE Iftekhari.BlogPosts
             SET title = @Title, content = @Content, summary = @Summary,
-                coverImage = @CoverImage, author = @Author, updatedAt = GETDATE()
+                coverImage = @CoverImage, author = @Author, authorEmail = @AuthorEmail, 
+                category = @Category, tags = @Tags, status = @Status, updatedAt = GETDATE()
             WHERE slug = @Slug
           `);
       } else {
         // Insert new blog
         await pool
           .request()
-          .input("Slug", slug)
-          .input("Title", title)
-          .input("Content", content)
-          .input("Summary", summary)
-          .input("CoverImage", coverImage)
-          .input("Author", author).query(`
-            INSERT INTO Iftekhari.BlogPosts (slug, title, content, summary, coverImage, author, createdAt, updatedAt)
-            VALUES (@Slug, @Title, @Content, @Summary, @CoverImage, @Author, GETDATE(), GETDATE())
+          .input("Slug", sql.NVarChar, slug)
+          .input("Title", sql.NVarChar, title)
+          .input("Content", sql.NText, content)
+          .input("Summary", sql.NVarChar, summary)
+          .input("CoverImage", sql.NVarChar, coverImage)
+          .input("Author", sql.NVarChar, finalAuthor)
+          .input("AuthorEmail", sql.NVarChar, finalAuthorEmail)
+          .input("Category", sql.NVarChar, category || null)
+          .input("Tags", sql.NVarChar, tags ? JSON.stringify(tags) : null)
+          .input("Status", sql.NVarChar, status || "draft").query(`
+            INSERT INTO Iftekhari.BlogPosts (slug, title, content, summary, coverImage, author, authorEmail, category, tags, status, createdAt, updatedAt)
+            VALUES (@Slug, @Title, @Content, @Summary, @CoverImage, @Author, @AuthorEmail, @Category, @Tags, @Status, GETDATE(), GETDATE())
           `);
       }
 
@@ -79,12 +113,32 @@ export default async function handler(
     }
 
     if (method === "DELETE") {
-      await pool
+      // Check if user is admin
+      const session = await getServerSession(req, res, authOptions);
+      const isAdmin = session?.user?.email && session.user?.role === 'admin';
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Soft delete - set deletedAt timestamp
+      const result = await pool
         .request()
         .input("Slug", slug)
-        .query(`DELETE FROM Iftekhari.BlogPosts WHERE slug = @Slug`);
+        .query(`
+          UPDATE Iftekhari.BlogPosts 
+          SET deletedAt = GETDATE() 
+          WHERE slug = @Slug AND deletedAt IS NULL
+        `);
 
-      return res.status(200).json({ success: true });
+      if (result.rowsAffected[0] === 0) {
+        return res.status(404).json({ message: "Blog not found or already deleted" });
+      }
+
+      return res.status(200).json({ 
+        success: true, 
+        message: "Blog soft deleted successfully" 
+      });
     }
 
     return res.status(405).json({ message: "Method Not Allowed" });

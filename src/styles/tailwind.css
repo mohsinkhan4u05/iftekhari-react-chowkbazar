@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Blog Enhancements */
+@import 'blog-enhancements.css';
+@import 'blog-responsive.css';
+
 /* Write your own custom base styles here */
 @layer base {
   html {

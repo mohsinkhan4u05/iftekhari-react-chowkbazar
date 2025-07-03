@@ -1,6 +1,6 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  // darkMode: false,
+  darkMode: false,
   theme: {
     screens: {
       sm: "480px",
@@ -101,5 +101,6 @@ module.exports = {
     require("@tailwindcss/forms")({
       strategy: "class",
     }),
+    require("@tailwindcss/line-clamp"),
   ],
 };

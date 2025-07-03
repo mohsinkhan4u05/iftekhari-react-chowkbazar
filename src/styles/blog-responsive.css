@@ -1,0 +1,256 @@
+/* Responsive Blog Content Styles */
+
+/* YouTube and embedded video responsiveness */
+.prose iframe[src*="youtube.com"],
+.prose iframe[src*="youtu.be"],
+.prose iframe[src*="vimeo.com"],
+.prose iframe[src*="dailymotion.com"],
+.prose iframe[src*="facebook.com"],
+.prose video,
+.prose embed {
+  position: relative;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  border-radius: 0.5rem;
+}
+
+/* Video wrapper for maintaining aspect ratio */
+.prose .video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.prose .video-wrapper iframe,
+.prose .video-wrapper video,
+.prose .video-wrapper embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* Enhanced mobile typography */
+@media (max-width: 640px) {
+  .prose {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+  
+  .prose h1 {
+    font-size: 1.875rem !important; /* 30px */
+    line-height: 1.2 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .prose h2 {
+    font-size: 1.5rem !important; /* 24px */
+    line-height: 1.3 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .prose h3 {
+    font-size: 1.25rem !important; /* 20px */
+    line-height: 1.4 !important;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .prose p {
+    margin-bottom: 1.25rem !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+  
+  .prose ul, .prose ol {
+    margin: 1rem 0 !important;
+    padding-left: 1.5rem !important;
+  }
+  
+  .prose li {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .prose blockquote {
+    margin: 1.5rem 0 !important;
+    padding-left: 1rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .prose pre {
+    font-size: 14px !important;
+    padding: 1rem !important;
+    overflow-x: auto !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .prose code {
+    font-size: 14px !important;
+    padding: 0.125rem 0.25rem !important;
+    border-radius: 0.25rem !important;
+  }
+}
+
+/* Enhanced tablet styles */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .prose {
+    font-size: 17px !important;
+    line-height: 1.7 !important;
+  }
+  
+  .prose h1 {
+    font-size: 2.25rem !important; /* 36px */
+  }
+  
+  .prose h2 {
+    font-size: 1.875rem !important; /* 30px */
+  }
+  
+  .prose h3 {
+    font-size: 1.5rem !important; /* 24px */
+  }
+}
+
+/* Image responsiveness */
+.prose img {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 0.5rem !important;
+  margin: 1.5rem 0 !important;
+}
+
+/* Table responsiveness */
+.prose table {
+  display: block !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  margin: 1.5rem 0 !important;
+  border-radius: 0.5rem !important;
+}
+
+@media (max-width: 640px) {
+  .prose table {
+    font-size: 14px !important;
+  }
+  
+  .prose th,
+  .prose td {
+    padding: 0.5rem !important;
+  }
+}
+
+/* Code block responsiveness */
+.prose pre {
+  overflow-x: auto !important;
+  white-space: pre !important;
+}
+
+/* Link styles for better mobile interaction */
+.prose a {
+  word-break: break-word !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
+/* Better spacing for mobile */
+@media (max-width: 640px) {
+  .prose > * + * {
+    margin-top: 1.25rem !important;
+  }
+  
+  .prose > h1 + *,
+  .prose > h2 + *,
+  .prose > h3 + *,
+  .prose > h4 + * {
+    margin-top: 0.75rem !important;
+  }
+}
+
+/* Dark mode adjustments */
+.dark .prose {
+  color: #e5e7eb !important;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  color: #f9fafb !important;
+}
+
+.dark .prose strong {
+  color: #f9fafb !important;
+}
+
+.dark .prose code {
+  background-color: #374151 !important;
+  color: #f59e0b !important;
+}
+
+.dark .prose pre {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .prose blockquote {
+  border-left-color: #f59e0b !important;
+  color: #d1d5db !important;
+}
+
+
+/* Mobile header fixes */
+@media (max-width: 640px) {
+  /* Ensure proper spacing in mobile header */
+  .mobile-header-spacing {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  
+  .mobile-flex-col {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Prevent overlap in navigation */
+  .mobile-nav-item {
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  /* Ensure buttons don't overlap */
+  .mobile-button-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  /* Mobile text truncation */
+  .mobile-truncate {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 200px !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .prose {
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+  }
+  
+  .prose iframe,
+  .prose video {
+    display: none !important;
+  }
+}
