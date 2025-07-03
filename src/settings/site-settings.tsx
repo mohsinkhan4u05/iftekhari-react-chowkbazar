@@ -54,7 +54,12 @@ export const siteSettings = {
         label: "menu-book",
       },
       {
-        id: 2,
+        id: 3,
+        path: "/blogs",
+        label: "menu-blogs",
+      },
+      {
+        id: 4,
         path: "/my-library",
         label: "My Library",
       },
@@ -72,6 +77,11 @@ export const siteSettings = {
       },
       {
         id: 3,
+        path: "/blogs",
+        label: "menu-blogs",
+      },
+      {
+        id: 4,
         path: "/my-library",
         label: "My Library",
       },

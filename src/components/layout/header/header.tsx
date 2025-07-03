@@ -12,6 +12,7 @@ import LanguageSwitcher from "@components/ui/language-switcher";
 import { signIn, signOut, useSession } from "next-auth/react";
 const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
 import UserMenu from "@components/my-account/user-menu";
+import AdminMenu from "@components/layout/header/admin-menu";
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
@@ -56,7 +57,8 @@ const Header: React.FC = () => {
               <SearchIcon />
             </button>
             {session && (
-              <div>
+              <div className="flex items-center gap-4">
+                <AdminMenu />
                 <UserMenu />
               </div>
             )}
