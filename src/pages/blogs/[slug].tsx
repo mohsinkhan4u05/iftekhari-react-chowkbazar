@@ -6,12 +6,14 @@ import { FiUser, FiCalendar, FiClock, FiArrowLeft, FiShare2, FiEdit3, FiEye } fr
 import Layout from "@components/layout/layout";
 import Container from "@components/ui/container";
 import { useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
 import { useViewTracker } from "../../hooks/useViewTracker";
 import CommentsSection from "../../components/blog/CommentsSection";
 import ShareModal from "../../components/blog/ShareModal";
 import RecentPosts from "../../components/blog/RecentPosts";
 import RelatedPosts from "../../components/blog/RelatedPosts";
 import { makeContentResponsive } from "../../utils/makeVideosResponsive";
+import { generateBlogSEO, optimizeImageForPlatform } from "../../utils/seoUtils";
 
 export default function BlogDetail() {
   const { query } = useRouter();
@@ -80,8 +82,74 @@ export default function BlogDetail() {
     );
   }
 
+  // Generate full URL for sharing
+  const fullUrl = typeof window !== 'undefined' ? window.location.href : `https://www.silsilaeiftekhari.in/blogs/${blog.slug}`;
+  
+  // Generate SEO data using utilities
+  const seoData = generateBlogSEO(blog, fullUrl);
+  
+  // Optimize image for WhatsApp sharing
+  const whatsappOptimizedImage = optimizeImageForPlatform(blog.coverImage, 'whatsapp');
+  
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <>
+      <NextSeo
+        title={seoData.title}
+        description={seoData.description}
+        canonical={seoData.url}
+        openGraph={{
+          type: 'article',
+          url: seoData.url,
+          title: blog.title,
+          description: seoData.description,
+          site_name: seoData.siteName,
+          images: [
+            {
+              url: whatsappOptimizedImage,
+              width: seoData.image.width,
+              height: seoData.image.height,
+              alt: seoData.image.alt,
+              type: seoData.image.type,
+            },
+          ],
+        }}
+        twitter={{
+          handle: '@iftekhari_silsila',
+          site: '@iftekhari_silsila',
+          cardType: 'summary_large_image',
+        }}
+        additionalMetaTags={[
+          {
+            name: 'author',
+            content: blog.author || 'Iftekhari Silsila',
+          },
+          {
+            property: 'article:published_time',
+            content: blog.createdAt,
+          },
+          {
+            property: 'article:modified_time',
+            content: blog.updatedAt,
+          },
+          {
+            property: 'article:author',
+            content: blog.author || 'Iftekhari Silsila',
+          },
+          {
+            property: 'article:section',
+            content: blog.category || 'Blog',
+          },
+          {
+            name: 'twitter:image',
+            content: whatsappOptimizedImage,
+          },
+          {
+            property: 'og:image:secure_url',
+            content: whatsappOptimizedImage,
+          },
+        ]}
+      />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Back Navigation */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <Container>
@@ -294,6 +362,7 @@ export default function BlogDetail() {
         />
       )}
     </div>
+    </>
   );
 }
 

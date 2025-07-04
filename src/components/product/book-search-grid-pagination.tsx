@@ -17,6 +17,7 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const { query } = useRouter();
   const category = query.category?.toString() || "";
+  const language = query.language?.toString() || "";
   const { setCount } = useBookCount();
 
   const categories = Array.isArray(category)
@@ -25,8 +26,15 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
     ? [category]
     : [];
 
+  const languages = Array.isArray(language)
+    ? language
+    : language
+    ? [language]
+    : [];
+
   const { data, isLoading, error } = usePaginatedBooksQuery({
     categories,
+    languages,
     page: currentPage,
     pageSize: 10,
   });
@@ -40,7 +48,7 @@ export const BookSearchGridPagination: FC<ProductGridProps> = ({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [category]);
+  }, [category, language]);
 
   if (error) return <p>{error.message}</p>;
 

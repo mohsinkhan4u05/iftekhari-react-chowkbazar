@@ -6,20 +6,24 @@ import { GetStaticProps } from "next";
 import { WishListSearchGridPagination } from "@components/product/wishlist-search-grid-pagination";
 import Text from "@components/ui/text";
 
+import { BookmarkProvider } from "@contexts/bookmark/bookmark.context";
+
 export default function Wishlist() {
   return (
-    <Container>
-      <div className={`flex pt-8 pb-16 lg:pb-20`}>
-        <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
-          {/* <SearchTopBar /> */}
-          <Text variant="pageHeading" className="lg:inline-flex pb-3">
-            My Wishlist
-          </Text>
-          <WishListSearchGridPagination />
+    <BookmarkProvider>
+      <Container>
+        <div className={`flex pt-8 pb-16 lg:pb-20`}>
+          <div className="w-full ltr:lg:-ml-9 rtl:lg:-mr-9">
+            {/* <SearchTopBar /> */}
+            <Text variant="pageHeading" className="lg:inline-flex pb-3">
+              My Wishlist
+            </Text>
+            <WishListSearchGridPagination />
+          </div>
         </div>
-      </div>
-      <Subscription />
-    </Container>
+        <Subscription />
+      </Container>
+    </BookmarkProvider>
   );
 }
 

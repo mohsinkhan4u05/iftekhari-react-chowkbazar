@@ -12,13 +12,18 @@ export default async function handler(
 
     const pool = await getConnection();
 
-    const { categories = "", page = "1", pageSize = "10" } = req.query;
+    const { categories = "", languages = "", page = "1", pageSize = "10" } = req.query;
     const pageNum = parseInt(page as string, 10);
     const size = parseInt(pageSize as string, 10);
 
     const categoryList = (categories as string)
       .split(",")
       .map((c) => c.trim())
+      .filter(Boolean);
+
+    const languageList = (languages as string)
+      .split(",")
+      .map((l) => l.trim())
       .filter(Boolean);
 
     let categoryIds: number[] = [];
@@ -46,10 +51,26 @@ export default async function handler(
 
     let countQuery = `SELECT COUNT(*) AS total FROM Iftekhari.Book`;
 
+    const whereConditions: string[] = [];
+    const countWhereConditions: string[] = [];
+
     if (categoryIds.length > 0) {
       const ids = categoryIds.join(",");
-      bookQuery += ` WHERE B.CategoryId IN (${ids})`;
-      countQuery += ` WHERE CategoryId IN (${ids})`;
+      whereConditions.push(`B.CategoryId IN (${ids})`);
+      countWhereConditions.push(`CategoryId IN (${ids})`);
+    }
+
+    if (languageList.length > 0) {
+      const languageNameList = languageList
+        .map((name) => `'${name.replace(/'/g, "''")}'`)
+        .join(",");
+      whereConditions.push(`B.Language IN (${languageNameList})`);
+      countWhereConditions.push(`Language IN (${languageNameList})`);
+    }
+
+    if (whereConditions.length > 0) {
+      bookQuery += ` WHERE ${whereConditions.join(' AND ')}`;
+      countQuery += ` WHERE ${countWhereConditions.join(' AND ')}`;
     }
 
     bookQuery += `

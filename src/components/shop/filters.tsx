@@ -1,4 +1,5 @@
 import { CategoryFilter } from "./category-filter";
+import { LanguageFilter } from "./language-filter";
 import { BrandFilter } from "./brand-filter";
 import { FilteredItem } from "./filtered-item";
 import { ColorFilter } from "./color-filter";
@@ -46,6 +47,7 @@ export const ShopFilters: React.FC = () => {
       </div>
 
       <CategoryFilter />
+      <LanguageFilter />
       {/* <BrandFilter />
 			<PriceFilter />
 			<ColorFilter /> */}

@@ -9,6 +9,7 @@ import ProductWishIcon from "@components/icons/product-wish-icon";
 import ProductCompareIcon from "@components/icons/product-compare-icon";
 import RatingDisplay from "@components/common/rating-display";
 import BookmarkButton from "@components/ui/bookmark-button";
+import { formatBookTitle } from "@utils/text-formatting";
 
 interface BookProps {
   product: Book;
@@ -237,7 +238,7 @@ const BookCard: FC<BookProps> = ({
             "text-heading": !bgTransparent,
           })}
         >
-          {product?.Name}
+          {formatBookTitle(product?.Name)}
         </h2>
 
         {/* Meta Info */}

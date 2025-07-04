@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Social Media Crawlers
+User-agent: facebookexternalhit/*
+Allow: /
+Crawl-delay: 1
+
+User-agent: Twitterbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: WhatsApp
+Allow: /
+Crawl-delay: 1
+
+User-agent: LinkedInBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: TelegramBot
+Allow: /
+Crawl-delay: 1
+
+# Allow access to Open Graph images
+Allow: /api/image-proxy
+Allow: /api/og-image
+Allow: /assets/images/
+Allow: /_next/image
+
+# Sitemap
+Sitemap: https://www.silsilaeiftekhari.in/sitemap.xml

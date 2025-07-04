@@ -14,6 +14,7 @@ import TestimonialCarousel from "@containers/testimonial-carousel";
 import Instagram from "@components/common/instagram";
 import DownloadApps from "@components/common/download-apps";
 import CategoryBlockBook from "@containers/category-block-book";
+import LanguageBlockBook from "@containers/language-block-book";
 import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
 import HireDesignerAncient from "@containers/buy-designer-ancient";
 
@@ -34,6 +35,17 @@ export default function Home() {
         <CategoryBlockBook
           type="rounded"
           sectionHeading="Browse Categories"
+          roundedItemCount={5}
+          roundedSpaceBetween={8}
+          imgSize="large"
+          demoVariant="ancient"
+          disableBorderRadius={true}
+          className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
+        />
+
+        <LanguageBlockBook
+          type="rounded"
+          sectionHeading="Browse by Language"
           roundedItemCount={5}
           roundedSpaceBetween={8}
           imgSize="large"
