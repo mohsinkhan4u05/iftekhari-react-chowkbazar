@@ -13,10 +13,18 @@ export const DefaultSeo = () => {
         url: "https://www.silsilaeiftekhari.in", // Optional but good for SEO
         images: [
           {
-            url: "https://www.silsilaeiftekhari.in/assets/images/logo.png", // ✅ Replace with your actual logo URL
+            url: "https://www.silsilaeiftekhari.in/assets/images/logo.png", // ✅ Default logo for sharing
             width: 1200,
             height: 630,
-            alt: "Iftekhari Silsila Logo",
+            alt: "Iftekhari Silsila - Sufi Books, Music, Videos, Poetry & Articles",
+            type: "image/png",
+          },
+          {
+            url: "https://www.silsilaeiftekhari.in/assets/images/og-default.jpg", // ✅ Fallback Open Graph image
+            width: 1200,
+            height: 630,
+            alt: "Iftekhari Silsila",
+            type: "image/jpeg",
           },
         ],
       }}

@@ -13,10 +13,12 @@ import PopularProductFeed from "@components/product/feeds/popular-product-feed";
 import TestimonialCarousel from "@containers/testimonial-carousel";
 import Instagram from "@components/common/instagram";
 import DownloadApps from "@components/common/download-apps";
-import CategoryBlockBook from "@containers/category-block-book";
+import BrowseSection from "@containers/browse-section";
+import CompactBookFeed from "@components/product/feeds/compact-book-feed";
 import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
 import HireDesignerAncient from "@containers/buy-designer-ancient";
 import CategoryBlock from "@containers/category-block";
+import BlogSection from "@containers/blog-section";
 
 export default function Home() {
   const sectionCommonStyle = "mb-7 md:mb-10 lg:mb-12 xl:mb-14 2xl:mb-[75px]";
@@ -32,7 +34,10 @@ export default function Home() {
       /> */}
 
       <Container>
-        <CategoryBlock sectionHeading="Books By Category" />
+        <BrowseSection
+          sectionHeading="Browse Books"
+          className={sectionCommonStyle}
+        />
         {/* <CategoryBlockBook
           type="rounded"
           sectionHeading="Browse Categories"
@@ -44,40 +49,38 @@ export default function Home() {
           className={`${sectionCommonStyle} lg:pb-1 xl:pb-0`}
         /> */}
 
-        <NewArrivalsBookFeed
-          demoVariant="ancient"
-          hideProductDescription={true}
-          showCategory={true}
-          showRating={true}
-          disableBorderRadius={true}
+        <CompactBookFeed
+          type="popular"
+          limit={20}
+          sectionHeading="Popular Books"
           className={sectionCommonStyle}
-          type={"popular"}
-          limit={12}
-          sectionHeading={"Popular Books"}
+          showViewAll={true}
         />
 
-        <NewArrivalsBookFeed
-          demoVariant="ancient"
-          hideProductDescription={true}
-          showCategory={true}
-          showRating={true}
-          disableBorderRadius={true}
+        <CompactBookFeed
+          type="editor-choice"
+          limit={20}
+          sectionHeading="Editors Choice"
           className={sectionCommonStyle}
-          type={"editor-choice"}
-          limit={12}
-          sectionHeading={"Editors Choice"}
+          showViewAll={true}
         />
 
-        <NewArrivalsBookFeed
-          demoVariant="ancient"
-          hideProductDescription={true}
-          showCategory={true}
-          showRating={true}
-          disableBorderRadius={true}
+        <CompactBookFeed
+          type="new-arrival"
+          limit={20}
+          sectionHeading="New Arrivals"
           className={sectionCommonStyle}
-          type={"new-arrival"}
-          limit={12}
-          sectionHeading={"New Arrivals"}
+          showViewAll={true}
+        />
+
+        {/* Blog Section */}
+        <BlogSection
+          sectionHeading="Latest Articles"
+          sectionSubHeading="Explore our latest insights, knowledge, and inspiration"
+          limit={3}
+          variant="minimal"
+          showViewAll={true}
+          className={sectionCommonStyle}
         />
 
         {/* <BannerBlockAncient

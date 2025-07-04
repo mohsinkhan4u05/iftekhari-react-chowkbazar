@@ -7,7 +7,7 @@ const SignUpForm = dynamic(() => import("@components/auth/sign-up-form"));
 const ForgetPasswordForm = dynamic(
 	() => import("@components/auth/forget-password-form")
 );
-const ProductPopup = dynamic(() => import("@components/product/product-popup"));
+const BookPopup = dynamic(() => import("@components/product/book-popup"));
 const ManagedModal: React.FC = () => {
 	const { displayModal, closeModal, modalView } = useUI();
 	return (
@@ -15,7 +15,7 @@ const ManagedModal: React.FC = () => {
 			{modalView === "LOGIN_VIEW" && <LoginForm />}
 			{modalView === "SIGN_UP_VIEW" && <SignUpForm />}
 			{modalView === "FORGET_PASSWORD" && <ForgetPasswordForm />}
-			{modalView === "PRODUCT_VIEW" && <ProductPopup />}
+			{modalView === "PRODUCT_VIEW" && <BookPopup />}
 			{modalView === "NEWSLETTER_VIEW" && <Newsletter />}
 		</Modal>
 	);

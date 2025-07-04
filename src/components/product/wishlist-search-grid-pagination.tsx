@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import BookCard from "@components/product/book-card";
 import type { FC } from "react";
 import { signIn, useSession } from "next-auth/react";
@@ -6,6 +6,7 @@ import { ImGoogle2 } from "react-icons/im";
 import Button from "@components/ui/button";
 import axios from "axios";
 import { useLoginMutation } from "@framework/auth/use-login";
+import { useBookmark } from "@contexts/bookmark/bookmark.context";
 import dynamic from "next/dynamic";
 const LottieLoader = dynamic(() => import("../common/loader/lottie-loader"), {
   ssr: false,
@@ -22,24 +23,29 @@ export const WishListSearchGridPagination: FC<ProductGridProps> = ({
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const { mutate: login, isPending } = useLoginMutation();
+  const { batchCheckBookmarks, bookmarks } = useBookmark();
 
-  const fetchWishlist = async () => {
+  console.log("bookmarks", bookmarks);
+
+  const fetchWishlist = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get("/api/user/bookmarks/list");
       setWishlist(res.data);
+      const bookIds = res.data.map((book: any) => book.ID);
+      await batchCheckBookmarks(bookIds);
     } catch (error) {
       console.error("Failed to fetch wishlist:", error);
     } finally {
       setLoading(false); // 👈 Hide loader
     }
-  };
+  }, [batchCheckBookmarks]);
 
   useEffect(() => {
     if (session) {
       fetchWishlist();
     }
-  }, [session]);
+  }, [session, fetchWishlist]);
 
   return (
     <>
