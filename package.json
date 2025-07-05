@@ -8,7 +8,9 @@
     "type:check": "tsc --noEmit",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-uploads": "node scripts/check-uploads.js",
+    "deploy-setup": "mkdir -p public/uploads && chmod 755 public/uploads"
   },
   "dependencies": {
     "@fontsource/open-sans": "5.1.1",
