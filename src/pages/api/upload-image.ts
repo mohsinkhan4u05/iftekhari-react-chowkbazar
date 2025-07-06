@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
 import fs from "fs";
-import path from "path";
+import { promisify } from "util";
 
-// Allow Next.js to parse form-data
+// Disable body parser for file uploads
 export const config = {
-  api: { bodyParser: false },
+  api: {
+    bodyParser: false,
+  },
 };
 
 export default async function handler(
@@ -16,76 +18,136 @@ export default async function handler(
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
+  console.log("=== UploadThing Direct Upload API Called ===");
+  
+  // First, check environment variables
+  if (!process.env.UPLOADTHING_TOKEN) {
+    console.error("❌ UPLOADTHING_TOKEN not found in environment variables");
+    return res.status(500).json({ 
+      error: "UploadThing not configured", 
+      message: "UPLOADTHING_TOKEN environment variable is missing" 
+    });
+  }
+
+  console.log("✅ UPLOADTHING_TOKEN found:", {
+    length: process.env.UPLOADTHING_TOKEN.length,
+    prefix: process.env.UPLOADTHING_TOKEN.substring(0, 8) + "...",
+    startsWithSk: process.env.UPLOADTHING_TOKEN.startsWith("sk_")
+  });
+
   try {
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    
-    // Ensure uploads directory exists with proper permissions
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true, mode: 0o755 });
-      console.log('Created uploads directory:', uploadDir);
+    // Parse the form data
+    const form = formidable({
+      maxFileSize: 4 * 1024 * 1024, // 4MB
+      keepExtensions: true,
+      filter: ({ mimetype }) => mimetype && mimetype.includes("image"),
+    });
+
+    const [fields, files] = await form.parse(req);
+    console.log("📄 Form parsed successfully");
+
+    const file = files.file?.[0];
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const form = formidable({
-      uploadDir,
-      keepExtensions: true,
-      maxFileSize: 10 * 1024 * 1024, // 10MB limit
-      filter: ({ mimetype }) => {
-        // Only allow image files
-        return mimetype && mimetype.includes("image");
-      },
+    console.log("📁 File details:", {
+      name: file.originalFilename,
+      size: file.size,
+      type: file.mimetype,
+      path: file.filepath
     });
 
-    form.parse(req, (err, fields, files) => {
-      if (err) {
-        console.error("Formidable Error:", err);
-        return res.status(500).json({ 
-          message: "Error parsing file upload", 
-          error: err.message 
-        });
-      }
+    // Import UploadThing
+    console.log("📦 Importing UploadThing SDK...");
+    const { UTApi } = await import("uploadthing/server");
+    console.log("✅ UploadThing SDK imported successfully");
 
-      const file = files.file?.[0];
-      if (!file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+    // Create UTApi instance
+    const utapi = new UTApi();
+    console.log("✅ UTApi instance created");
 
-      const fileName = path.basename(file.filepath);
-      const filePath = path.join(uploadDir, fileName);
-      
-      // Verify file was actually created
-      if (!fs.existsSync(filePath)) {
-        console.error('File was not created:', filePath);
-        return res.status(500).json({ message: "File upload failed" });
-      }
+    // Read file
+    console.log("📖 Reading file...");
+    const fileBuffer = await promisify(fs.readFile)(file.filepath);
+    console.log("✅ File read successfully, size:", fileBuffer.length);
 
-      // Set proper file permissions
-      try {
-        fs.chmodSync(filePath, 0o644);
-      } catch (chmodError) {
-        console.warn('Could not set file permissions:', chmodError);
-      }
-
-      const url = `/uploads/${fileName}`;
-      
-      console.log('File uploaded successfully:', {
-        originalName: file.originalFilename,
-        fileName,
-        size: file.size,
-        url
-      });
-
-      return res.status(200).json({ 
-        url,
-        fileName,
-        originalName: file.originalFilename,
-        size: file.size
-      });
+    // Create File object for UploadThing
+    console.log("🔄 Creating File object for UploadThing...");
+    
+    // Use a more compatible approach
+    const fileName = file.originalFilename || `image-${Date.now()}.jpg`;
+    const fileType = file.mimetype || "image/jpeg";
+    
+    // Create a File-like object that UploadThing can handle
+    const uploadFile = new File([fileBuffer], fileName, { type: fileType });
+    console.log("✅ File object created:", {
+      name: uploadFile.name,
+      size: uploadFile.size,
+      type: uploadFile.type
     });
+
+    // Upload to UploadThing
+    console.log("☁️ Uploading to UploadThing...");
+    const uploadResult = await utapi.uploadFiles(uploadFile);
+    
+    console.log("📊 Upload result:", JSON.stringify(uploadResult, null, 2));
+
+    // Check for errors
+    if (uploadResult.error) {
+      console.error("❌ UploadThing error:", uploadResult.error);
+      return res.status(500).json({
+        error: "UploadThing upload failed",
+        details: uploadResult.error,
+        message: uploadResult.error.message || "Unknown UploadThing error"
+      });
+    }
+
+    if (!uploadResult.data) {
+      console.error("❌ No data returned from UploadThing");
+      return res.status(500).json({
+        error: "No data returned",
+        message: "UploadThing returned no data"
+      });
+    }
+
+    console.log("🎉 Upload successful!");
+    console.log("📎 File URL:", uploadResult.data.url);
+    console.log("🔑 File key:", uploadResult.data.key);
+
+    // Clean up temp file
+    try {
+      await promisify(fs.unlink)(file.filepath);
+      console.log("🗑️ Temp file cleaned up");
+    } catch (cleanupError) {
+      console.warn("⚠️ Failed to clean up temp file:", cleanupError);
+    }
+
+    // Return success
+    return res.status(200).json({
+      success: true,
+      url: uploadResult.data.url,
+      key: uploadResult.data.key,
+      name: uploadResult.data.name,
+      size: uploadResult.data.size,
+      originalName: file.originalFilename,
+      mimetype: file.mimetype,
+      provider: "uploadthing",
+      timestamp: new Date().toISOString()
+    });
+
   } catch (error) {
-    console.error('Upload API Error:', error);
-    return res.status(500).json({ 
-      message: "Internal server error", 
-      error: error instanceof Error ? error.message : 'Unknown error'
+    console.error("💥 Upload error:", error);
+    console.error("📋 Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : "No stack trace",
+      name: error instanceof Error ? error.name : "Unknown error type"
+    });
+
+    return res.status(500).json({
+      error: "Upload failed",
+      message: error instanceof Error ? error.message : "Unknown error",
+      timestamp: new Date().toISOString()
     });
   }
 }

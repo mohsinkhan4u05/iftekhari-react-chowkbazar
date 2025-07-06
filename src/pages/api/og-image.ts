@@ -1,32 +1,36 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+// /pages/api/og-image.ts
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { title, image, type = 'article' } = req.query;
+import type { NextApiRequest, NextApiResponse } from "next";
+import https from "https";
+import http from "http";
+import { URL } from "url";
 
-  // Set CORS headers for open graph crawlers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
-  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const imageUrl = req.query.url as string;
 
-  if (!title || !image) {
-    return res.status(400).json({ error: 'Title and image are required' });
+  if (!imageUrl || !/^https:\/\/utfs\.io\/f\//.test(imageUrl)) {
+    return res.status(400).json({ error: "Invalid or missing image URL" });
   }
 
-  // Return meta tags as JSON for dynamic generation
-  const metaTags = {
-    title: title as string,
-    description: type === 'article' ? `Read ${title} on Iftekhari Silsila` : title as string,
-    image: {
-      url: (image as string).startsWith('http') ? image : `https://www.silsilaeiftekhari.in${image}`,
-      width: 1200,
-      height: 630,
-      alt: title as string,
-      type: 'image/jpeg'
-    },
-    url: req.headers.referer || 'https://www.silsilaeiftekhari.in',
-    siteName: 'Iftekhari Silsila',
-    type: type as string
-  };
+  try {
+    const url = new URL(imageUrl);
+    const client = url.protocol === "https:" ? https : http;
 
-  res.status(200).json(metaTags);
+    client
+      .get(url, (proxyRes) => {
+        const contentType = proxyRes.headers["content-type"] || "image/jpeg";
+        res.setHeader("Content-Type", contentType);
+        res.setHeader("Cache-Control", "public, max-age=86400");
+        proxyRes.pipe(res);
+      })
+      .on("error", (err) => {
+        console.error("Image proxy error:", err);
+        res.status(500).json({ error: "Failed to fetch image" });
+      });
+  } catch (err) {
+    res.status(500).json({ error: "Invalid proxy request" });
+  }
 }

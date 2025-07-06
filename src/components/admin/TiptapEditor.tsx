@@ -10,6 +10,7 @@ import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableHeader from "@tiptap/extension-table-header";
 import TableCell from "@tiptap/extension-table-cell";
+// Note: BulletList, OrderedList, ListItem, and Blockquote are included in StarterKit
 import { useEffect, useState } from "react";
 
 import javascript from "highlight.js/lib/languages/javascript";
@@ -44,7 +45,29 @@ export default function TiptapEditor({ content, onChange }: TiptapEditorProps) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Configure built-in extensions for better styling
+        bulletList: {
+          HTMLAttributes: {
+            class: 'list-disc list-inside space-y-1',
+          },
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'list-decimal list-inside space-y-1',
+          },
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'ml-4',
+          },
+        },
+        blockquote: {
+          HTMLAttributes: {
+            class: 'border-l-4 border-gray-300 pl-4 py-2 italic bg-gray-50 dark:bg-gray-800 dark:border-gray-600',
+          },
+        },
+      }),
       Link.configure({ openOnClick: false }),
       Image,
       Youtube.configure({ width: 640, height: 360 }),

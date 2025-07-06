@@ -18,6 +18,7 @@ import {
   FiType,
 } from "react-icons/fi";
 import DynamicTiptapEditor from "../admin/DynamicTiptapEditor";
+import { CoverImageUploader } from "../ui/CoverImageUploader";
 
 interface BlogFormProps {
   initialData?: any;
@@ -154,6 +155,12 @@ export default function BlogForm({ initialData }: BlogFormProps) {
   };
 
   const handleImageUpload = async (file: File) => {
+    console.log('Starting image upload:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+    
     setUploadProgress(0);
     const formData = new FormData();
     formData.append("file", file);
@@ -170,6 +177,7 @@ export default function BlogForm({ initialData }: BlogFormProps) {
         });
       }, 100);
 
+      console.log('Making upload request...');
       const res = await fetch("/api/upload-image", {
         method: "POST",
         body: formData,
@@ -178,16 +186,36 @@ export default function BlogForm({ initialData }: BlogFormProps) {
       clearInterval(progressInterval);
       setUploadProgress(100);
 
+      console.log('Upload response:', {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok
+      });
+
       if (res.ok) {
         const data = await res.json();
+        console.log('Upload successful:', data);
         setForm({ ...form, coverImage: data.url });
         setTimeout(() => setUploadProgress(0), 1000);
       } else {
-        throw new Error("Upload failed");
+        const errorData = await res.text();
+        console.error('Upload failed:', {
+          status: res.status,
+          statusText: res.statusText,
+          body: errorData
+        });
+        throw new Error(`Upload failed: ${res.status} ${res.statusText}`);
       }
     } catch (error) {
+      console.error('Upload error:', error);
       setUploadProgress(0);
-      alert("Failed to upload image");
+      
+      // More detailed error message
+      const errorMessage = error instanceof Error 
+        ? `Failed to upload image: ${error.message}`
+        : 'Failed to upload image: Unknown error';
+      
+      alert(errorMessage);
     }
   };
 
@@ -528,91 +556,16 @@ export default function BlogForm({ initialData }: BlogFormProps) {
                   </h2>
                 </div>
 
-                {form.coverImage ? (
-                  <div className="relative">
-                    <div className="relative h-48 rounded-xl overflow-hidden">
-                      <Image
-                        src={form.coverImage}
-                        alt="Cover preview"
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button
-                          type="button"
-                          onClick={() => setForm({ ...form, coverImage: "" })}
-                          className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                        >
-                          <FiX className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    onDrop={handleDrop}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDragEnter={() => setIsDragging(true)}
-                    onDragLeave={() => setIsDragging(false)}
-                    className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                      isDragging
-                        ? "border-accent bg-accent/10"
-                        : errors.coverImage
-                        ? "border-red-500"
-                        : "border-gray-300 dark:border-gray-600"
-                    }`}
-                  >
-                    <FiCamera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Drag and drop an image here, or click to select
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 bg-accent dark:border-gray-600 dark:text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
-                      >
-                        <FiCamera className="w-4 h-4 text-gray" />
-                        Choose File
-                      </button>
-                      <span className="text-gray-500 dark:text-gray-400">
-                        or
-                      </span>
-                      <input
-                        name="coverImage"
-                        placeholder="Enter image URL"
-                        value={form.coverImage}
-                        onChange={handleChange}
-                        className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-white placeholder-gray-500"
-                      />
-                    </div>
-
-                    {uploadProgress > 0 && (
-                      <div className="mt-4">
-                        <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                          <div
-                            className="bg-accent h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${uploadProgress}%` }}
-                          />
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                          Uploading... {uploadProgress}%
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleImageUpload(file);
+                <CoverImageUploader
+                  currentImage={form.coverImage}
+                  onUploadComplete={(url) => {
+                    setForm({ ...form, coverImage: url });
+                    // Clear error when image is uploaded
+                    if (errors.coverImage) {
+                      setErrors({ ...errors, coverImage: undefined });
+                    }
                   }}
-                  className="hidden"
+                  onRemove={() => setForm({ ...form, coverImage: "" })}
                 />
 
                 {errors.coverImage && (

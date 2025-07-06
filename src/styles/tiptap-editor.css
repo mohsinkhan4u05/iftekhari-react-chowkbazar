@@ -1,0 +1,164 @@
+/* TipTap Editor Custom Styles */
+
+/* Bullet List Styles */
+.ProseMirror ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.ProseMirror ul li {
+  display: list-item;
+  margin: 0.25rem 0;
+  padding-left: 0.25rem;
+}
+
+.ProseMirror ul ul {
+  list-style-type: circle;
+  margin-left: 1rem;
+}
+
+.ProseMirror ul ul ul {
+  list-style-type: square;
+}
+
+/* Ordered List Styles */
+.ProseMirror ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.ProseMirror ol li {
+  display: list-item;
+  margin: 0.25rem 0;
+  padding-left: 0.25rem;
+}
+
+.ProseMirror ol ol {
+  list-style-type: lower-alpha;
+  margin-left: 1rem;
+}
+
+.ProseMirror ol ol ol {
+  list-style-type: lower-roman;
+}
+
+/* Blockquote Styles */
+.ProseMirror blockquote {
+  border-left: 4px solid #d1d5db;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin: 1rem 0;
+  font-style: italic;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  color: #374151;
+}
+
+/* Dark mode blockquote */
+.dark .ProseMirror blockquote {
+  border-left-color: #4b5563;
+  background-color: #1f2937;
+  color: #d1d5db;
+}
+
+/* Nested blockquotes */
+.ProseMirror blockquote blockquote {
+  border-left-color: #9ca3af;
+  background-color: #f3f4f6;
+  margin-left: 1rem;
+}
+
+.dark .ProseMirror blockquote blockquote {
+  border-left-color: #6b7280;
+  background-color: #374151;
+}
+
+/* General paragraph spacing within lists */
+.ProseMirror li p {
+  margin: 0;
+}
+
+/* Ensure proper list indentation */
+.ProseMirror li > ul,
+.ProseMirror li > ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Code block styling within lists and blockquotes */
+.ProseMirror li pre,
+.ProseMirror blockquote pre {
+  margin: 0.5rem 0;
+}
+
+/* Table styles within lists and blockquotes */
+.ProseMirror li table,
+.ProseMirror blockquote table {
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+/* Ensure proper focus outline for lists */
+.ProseMirror:focus ul,
+.ProseMirror:focus ol,
+.ProseMirror:focus blockquote {
+  outline: none;
+}
+
+/* List item hover effect */
+.ProseMirror li:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 0.25rem;
+}
+
+.dark .ProseMirror li:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Blockquote hover effect */
+.ProseMirror blockquote:hover {
+  border-left-color: #3b82f6;
+  transition: border-color 0.2s ease;
+}
+
+.dark .ProseMirror blockquote:hover {
+  border-left-color: #60a5fa;
+}
+
+/* Empty list item placeholder */
+.ProseMirror li:empty::before {
+  content: '';
+  display: inline-block;
+  height: 1em;
+}
+
+/* Empty blockquote placeholder */
+.ProseMirror blockquote:empty::before {
+  content: 'Type your quote here...';
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.dark .ProseMirror blockquote:empty::before {
+  color: #6b7280;
+}
+
+/* Fix for nested content spacing */
+.ProseMirror blockquote > *:first-child {
+  margin-top: 0;
+}
+
+.ProseMirror blockquote > *:last-child {
+  margin-bottom: 0;
+}
+
+.ProseMirror li > *:first-child {
+  margin-top: 0;
+}
+
+.ProseMirror li > *:last-child {
+  margin-bottom: 0;
+}

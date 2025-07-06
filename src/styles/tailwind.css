@@ -3,17 +3,25 @@
 @tailwind utilities;
 
 /* Blog Enhancements */
-@import 'blog-enhancements.css';
-@import 'blog-responsive.css';
+@import "blog-enhancements.css";
+@import "blog-responsive.css";
 
 /* Write your own custom base styles here */
 @layer base {
-  html {
+  /* html {
     -webkit-tap-highlight-color: transparent;
   }
   html,
   body {
     @apply antialiased text-body font-body;
+  } */
+  html {
+    color-scheme: light;
+    background-color: #ffffff;
+  }
+  body {
+    background-color: #ffffff;
+    color: #111111;
   }
   p {
     @apply mb-5;
@@ -65,7 +73,7 @@
   }
   .headerMenu .menuItem > a::before {
     @apply absolute w-0 ltr:right-0 rtl:left-0 bg-heading -bottom-7;
-    content: '';
+    content: "";
     height: 3px;
     transition: all 0.3s ease-in-out 0s;
   }
@@ -166,7 +174,7 @@
     @apply font-semibold text-black;
   }
   .mobileMenu .menu-item.active::before {
-    content: '';
+    content: "";
     width: 3px;
     @apply absolute top-0 bottom-0 flex h-full bg-heading ltr:left-0 rtl:right-0;
   }
@@ -177,7 +185,7 @@
     @apply relative py-2.5 text-body;
   }
   .mobileMenu li > ul > li > div > a:before {
-    content: '';
+    content: "";
     height: 1px;
     @apply flex absolute bg-body top-1/2 ltr:left-1.5 rtl:right-1.5 ltr:md:left-3 rtl:md:right-3 w-1.5 md:w-2;
   }
@@ -246,7 +254,7 @@
   }
   .slider:before {
     position: absolute;
-    content: '';
+    content: "";
     height: 16px;
     width: 16px;
     left: 4px;

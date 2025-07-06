@@ -63,28 +63,33 @@ const CustomApp = ({
 
   return (
     <SessionProvider session={session}>
-      <RouteLoader />
-      <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
-        <QueryClientProvider client={queryClientRef.current}>
-          {/* @ts-ignore */}
-          <HydrationBoundary state={pageProps.dehydratedState}>
+      <div
+        className="bg-white text-black min-h-screen"
+        style={{ colorScheme: "light" }}
+      >
+        <RouteLoader />
+        <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
+          <QueryClientProvider client={queryClientRef.current}>
             {/* @ts-ignore */}
-            <ManagedUIContext>
-              <Layout pageProps={pageProps}>
-                <DefaultSeo />
-                <BookCountProvider>
-                  <Component {...pageProps} key={router.route} />
-                </BookCountProvider>
-                <ToastContainer toastClassName="!text-white" />
-                <Toaster position="top-right" reverseOrder={false} />
-              </Layout>
-              <ManagedModal />
-              <ManagedDrawer />
-            </ManagedUIContext>
-          </HydrationBoundary>
-          {/* <ReactQueryDevtools /> */}
-        </QueryClientProvider>
-      </AnimatePresence>
+            <HydrationBoundary state={pageProps.dehydratedState}>
+              {/* @ts-ignore */}
+              <ManagedUIContext>
+                <Layout pageProps={pageProps}>
+                  <DefaultSeo />
+                  <BookCountProvider>
+                    <Component {...pageProps} key={router.route} />
+                  </BookCountProvider>
+                  <ToastContainer toastClassName="!text-white" />
+                  <Toaster position="top-right" reverseOrder={false} />
+                </Layout>
+                <ManagedModal />
+                <ManagedDrawer />
+              </ManagedUIContext>
+            </HydrationBoundary>
+            {/* <ReactQueryDevtools /> */}
+          </QueryClientProvider>
+        </AnimatePresence>
+      </div>
     </SessionProvider>
   );
 };
