@@ -73,6 +73,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.17",
     "swiper": "11.1.15",
+    "uploadthing": "^7.7.3",
     "use-debounce": "^10.0.5"
   },
   "devDependencies": {
