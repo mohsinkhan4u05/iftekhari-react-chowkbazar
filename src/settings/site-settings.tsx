@@ -61,7 +61,7 @@ export const siteSettings = {
       {
         id: 4,
         path: "/my-library",
-        label: "My Library",
+        label: "menu-my-library",
       },
     ],
     mobileMenu: [
@@ -83,7 +83,7 @@ export const siteSettings = {
       {
         id: 4,
         path: "/my-library",
-        label: "My Library",
+        label: "menu-my-library",
       },
     ],
     languageMenu: [
