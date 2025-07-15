@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../framework/lib/db";
+import { generateSlug } from "../../../utils/generate-slug";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,7 +13,12 @@ export default async function handler(
 
     const pool = await getConnection();
 
-    const { categories = "", languages = "", page = "1", pageSize = "10" } = req.query;
+    const {
+      categories = "",
+      languages = "",
+      page = "1",
+      pageSize = "10",
+    } = req.query;
     const pageNum = parseInt(page as string, 10);
     const size = parseInt(pageSize as string, 10);
 
@@ -69,8 +75,8 @@ export default async function handler(
     }
 
     if (whereConditions.length > 0) {
-      bookQuery += ` WHERE ${whereConditions.join(' AND ')}`;
-      countQuery += ` WHERE ${countWhereConditions.join(' AND ')}`;
+      bookQuery += ` WHERE ${whereConditions.join(" AND ")}`;
+      countQuery += ` WHERE ${countWhereConditions.join(" AND ")}`;
     }
 
     bookQuery += `
@@ -84,10 +90,15 @@ export default async function handler(
     const books = booksResult.recordset;
     const totalBooks = countResult.recordset[0]?.total || 0;
 
+    const booksWithSlug = books.map((book: any) => ({
+      ...book,
+      slug: generateSlug(book.Name),
+    }));
+
     return res.status(200).json({
       success: true,
       message: "Books retrieved successfully",
-      data: books, // Each book now includes CategoryName
+      data: booksWithSlug, // Each book now includes CategoryName
       pagination: {
         currentPage: pageNum,
         pageSize: size,

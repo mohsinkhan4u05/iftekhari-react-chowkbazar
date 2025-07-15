@@ -274,7 +274,7 @@ const CompactBookFeed: React.FC<CompactBookFeedProps> = ({
               : displayBooks.map((book: any) => (
                   <Link
                     key={book.ID}
-                    href={`/books/${book.Name}/${book.ID}`}
+                    href={`/books/${book.slug}/${book.ID}`}
                     className="flex-shrink-0 group w-40 hover:scale-105 transition-transform duration-200"
                   >
                     {/* Book Cover */}

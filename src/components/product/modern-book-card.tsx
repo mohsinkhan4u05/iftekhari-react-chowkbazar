@@ -36,7 +36,7 @@ const ModernBookCard: React.FC<ModernBookCardProps> = ({
     <div
       className={`group relative bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 ${className}`}
     >
-      <Link href={`/books/${book.Slug}/${book.ID}`}>
+      <Link href={`/books/${book.slug}/${book.ID}`}>
         {/* Book Cover */}
         <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
           <img

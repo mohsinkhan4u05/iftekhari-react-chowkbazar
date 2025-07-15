@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../framework/lib/db";
+import { generateSlug } from "../../../utils/generate-slug";
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,7 +47,12 @@ export default async function handler(
       .input("limit", Number(limit))
       .query(query);
 
-    res.status(200).json(result.recordset);
+    const booksWithSlug = result.recordset.map((book: any) => ({
+      ...book,
+      slug: generateSlug(book.Name),
+    }));
+
+    res.status(200).json(booksWithSlug);
   } catch (error) {
     console.error("SQL error:", error);
     res.status(500).json({ error: "Internal server error" });
