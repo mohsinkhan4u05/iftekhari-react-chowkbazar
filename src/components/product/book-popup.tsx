@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import BookmarkButton from "@components/ui/bookmark-button";
 import { formatBookTitle } from "@utils/text-formatting";
+import { API_BASE_URL } from "@utils/constants";
 
 export default function BookPopup() {
   const { t } = useTranslation("common");
@@ -16,7 +17,7 @@ export default function BookPopup() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { Name, ImagePath, Author, Translator, Views, TotalPages, CategoryName, Language, Rating } = data;
-  const placeholderImage = `https://admin.silsilaeiftekhari.in/${ImagePath}`;
+  const placeholderImage = `${API_BASE_URL}${ImagePath}`;
 
   async function navigateToBookPage() {
     try {

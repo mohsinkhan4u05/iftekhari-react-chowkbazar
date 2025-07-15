@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import RatingDisplay from "@components/common/rating-display";
 import Lottie from "lottie-react";
 import loaderAnimation from "/public/loader.json";
+import { API_BASE_URL } from "@utils/constants";
 export default function ProductPopup() {
   const { t } = useTranslation("common");
   const {
@@ -20,7 +21,7 @@ export default function ProductPopup() {
   const variations = getVariations(data.variations);
   const { Name, ImagePath } = data;
 
-  const placeholderImage = `http://admin.silsilaeiftekhari.in/${ImagePath}`;
+  const placeholderImage = `${API_BASE_URL}${ImagePath}`;
 
   // function navigateToBookPage() {
   //   setIsLoading(true);

@@ -1,13 +1,14 @@
 import Link from "@components/ui/link";
 import Image from "next/image";
 import { ROUTES } from "@utils/routes";
+import { API_BASE_URL } from "@utils/constants";
 
 type SearchProductProps = {
   item: any;
 };
 
 const SearchProduct: React.FC<SearchProductProps> = ({ item }) => {
-  const placeholderImage = `http://admin.silsilaeiftekhari.in/${item?.ImagePath}`;
+  const placeholderImage = `${API_BASE_URL}${item?.ImagePath}`;
   return (
     <Link
       href={`${ROUTES.BOOK}/${item?.Name}/${item?.ID}`}

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../../framework/lib/db";
+import { API_BASE_URL } from "../../../../utils/constants";
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,10 +34,9 @@ export default async function handler(
       return res.status(404).json({ message: "Book not found" });
     }
 
-    const domain = "https://admin.silsilaeiftekhari.in";
     const images = Array.from(
       { length: book.TotalPages },
-      (_, i) => `${domain}/Uploads/${book.BookId}/${i}.jpg`
+      (_, i) => `${API_BASE_URL}Uploads/Uploads/${book.BookId}/${i}.jpg`
     );
 
     const bookInfo = {

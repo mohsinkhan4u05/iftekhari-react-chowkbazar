@@ -3,6 +3,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useNewArrivalBooksQuery } from "@framework/product/get-all-new-arrival-books";
 import { ROUTES } from "@utils/routes";
+import { API_BASE_URL } from "@utils/constants";
 import { Book } from "@framework/types";
 import { formatBookTitle } from "@utils/text-formatting";
 
@@ -273,7 +274,7 @@ const CompactBookFeed: React.FC<CompactBookFeedProps> = ({
               : displayBooks.map((book: any) => (
                   <Link
                     key={book.ID}
-                    href={`/books/${book.Slug}/${book.ID}`}
+                    href={`/books/${book.Name}/${book.ID}`}
                     className="flex-shrink-0 group w-40 hover:scale-105 transition-transform duration-200"
                   >
                     {/* Book Cover */}
@@ -281,7 +282,7 @@ const CompactBookFeed: React.FC<CompactBookFeedProps> = ({
                       <img
                         src={
                           book.image?.thumbnail ||
-                          `https://admin.silsilaeiftekhari.in/${book.ImagePath}`
+                          `${API_BASE_URL}${book.ImagePath}`
                         }
                         alt={book.Name}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

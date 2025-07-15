@@ -7,7 +7,10 @@ module.exports = {
     localeDetection: false,
   },
   images: {
-    domains: ["https://admin.silsilaeiftekhari.in/"],
+    domains: [
+      "admin.silsilaeiftekhari.in",
+      "iftekhari.b-cdn.net",
+    ],
   },
   localePath: path.resolve("./public/locales"),
 };

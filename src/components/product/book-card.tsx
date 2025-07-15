@@ -10,6 +10,7 @@ import ProductCompareIcon from "@components/icons/product-compare-icon";
 import RatingDisplay from "@components/common/rating-display";
 import BookmarkButton from "@components/ui/bookmark-button";
 import { formatBookTitle } from "@utils/text-formatting";
+import { API_BASE_URL } from "@utils/constants";
 
 interface BookProps {
   product: Book;
@@ -53,7 +54,7 @@ const BookCard: FC<BookProps> = ({
   disableBorderRadius = false,
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
-  const placeholderImage = `https://admin.silsilaeiftekhari.in/${product?.ImagePath}`;
+  const placeholderImage = `${API_BASE_URL}${product?.ImagePath}`;
   const { price, basePrice, discount } = usePrice({
     amount: product.sale_price ? product.sale_price : product.price,
     baseAmount: product.price,

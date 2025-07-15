@@ -4,6 +4,7 @@ import { useUI } from "@contexts/ui.context";
 import { Book } from "@framework/types";
 import { formatBookTitle } from "@utils/text-formatting";
 import OptimizedBookmarkButton from "@components/ui/optimized-bookmark-button";
+import { API_BASE_URL } from "@utils/constants";
 
 interface ModernBookCardProps {
   book: Book;
@@ -15,7 +16,7 @@ const ModernBookCard: React.FC<ModernBookCardProps> = ({
   className = "",
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
-  const placeholderImage = `https://admin.silsilaeiftekhari.in/${book?.ImagePath}`;
+  const placeholderImage = `${API_BASE_URL}${book?.ImagePath}`;
 
   const handleQuickView = (e: React.MouseEvent) => {
     e.preventDefault();

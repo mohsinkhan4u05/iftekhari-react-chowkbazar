@@ -11,7 +11,14 @@ const withPWA = nextPWA({
 const nextConfig = {
   i18n,
   images: {
-    domains: ["admin.silsilaeiftekhari.in", "www.silsilaeiftekhari.in", "silsilaeiftekhari.in"],
+    domains: [
+      "admin.silsilaeiftekhari.in",
+      "www.silsilaeiftekhari.in",
+      "silsilaeiftekhari.in",
+      "utfs.io",
+      "iftekhari.b-cdn.net",
+      "www.iftekhari.b-cdn.net",
+    ],
     minimumCacheTTL: 2678400, // ✅ 31 days
     formats: ["image/webp"], // ✅ Modern format support
     deviceSizes: [640, 768, 828, 1200], // ✅ Added 1200 for Open Graph
@@ -28,6 +35,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "silsilaeiftekhari.in",
+      },
+      {
+        protocol: "https",
+        hostname: "**.ufs.sh",
+      },
+      {
+        protocol: "https",
+        hostname: "**.utfs.io",
       },
     ],
   },
