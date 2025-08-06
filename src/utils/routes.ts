@@ -20,5 +20,11 @@ export const ROUTES = {
   ORDER: "/order",
   BOOK: `/books`,
   BOOK_CATEGORY: "/books/category",
+  MUSIC: `/music`,
   WISHLIST: "/wishlist",
+  // Admin Routes
+  ADMIN_ARTISTS: "/admin/artists",
+  ADMIN_ALBUMS: "/admin/albums",
+  ADMIN_TRACKS: "/admin/tracks",
+  ADMIN_BLOGS: "/admin/blogs",
 };

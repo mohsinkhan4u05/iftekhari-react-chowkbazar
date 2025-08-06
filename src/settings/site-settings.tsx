@@ -60,6 +60,11 @@ export const siteSettings = {
       },
       {
         id: 4,
+        path: "/music",
+        label: "menu-music",
+      },
+      {
+        id: 5,
         path: "/my-library",
         label: "menu-my-library",
       },
@@ -82,6 +87,11 @@ export const siteSettings = {
       },
       {
         id: 4,
+        path: "/music",
+        label: "menu-music",
+      },
+      {
+        id: 5,
         path: "/my-library",
         label: "menu-my-library",
       },

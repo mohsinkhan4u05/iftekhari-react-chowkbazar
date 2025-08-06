@@ -8,7 +8,10 @@ import {
   FiPlus, 
   FiList,
   FiFileText,
-  FiUsers
+  FiUsers,
+  FiMusic,
+  FiMic,
+  FiDisc
 } from 'react-icons/fi';
 
 export default function AdminMenu() {
@@ -63,6 +66,49 @@ export default function AdminMenu() {
               <div>
                 <div className="font-medium">Create New Blog</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">Write a new article</div>
+              </div>
+            </Link>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+
+          {/* Music Management Section */}
+          <div className="px-3 py-2">
+            <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              Music Management
+            </div>
+            
+            <Link
+              href="/admin/artists"
+              className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <FiMic className="w-4 h-4" />
+              <div>
+                <div className="font-medium">Artists</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Manage music artists</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/albums"
+              className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <FiDisc className="w-4 h-4" />
+              <div>
+                <div className="font-medium">Albums</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Manage music albums</div>
+              </div>
+            </Link>
+
+            <Link
+              href="/admin/tracks"
+              className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <FiMusic className="w-4 h-4" />
+              <div>
+                <div className="font-medium">Tracks</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">Manage music tracks</div>
               </div>
             </Link>
           </div>

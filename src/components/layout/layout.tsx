@@ -47,7 +47,7 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
       />
       <Header />
       <main
-        className="relative flex-grow"
+        className="relative flex-grow pb-16 md:pb-20"
         style={{
           minHeight: "-webkit-fill-available",
           WebkitOverflowScrolling: "touch",

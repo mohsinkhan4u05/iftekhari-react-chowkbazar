@@ -35,6 +35,10 @@ import { getDirection } from "@utils/get-direction";
 import { BookCountProvider } from "@contexts/book/book-count.context";
 import { SessionProvider } from "next-auth/react";
 import RouteLoader from "../components/common/loader/route-loader";
+import { MusicPlayerProvider } from "@contexts/music-player.context";
+import { PlaylistProvider } from "@contexts/playlist.context";
+import MusicPlayer from "@components/music-player/music-player";
+import ClientOnly from "@components/common/client-only";
 
 function handleExitComplete() {
   if (typeof window !== "undefined") {
@@ -77,7 +81,14 @@ const CustomApp = ({
                 <Layout pageProps={pageProps}>
                   <DefaultSeo />
                   <BookCountProvider>
-                    <Component {...pageProps} key={router.route} />
+                    <PlaylistProvider>
+                      <MusicPlayerProvider>
+                        <Component {...pageProps} key={router.route} />
+                        <ClientOnly>
+                          <MusicPlayer />
+                        </ClientOnly>
+                      </MusicPlayerProvider>
+                    </PlaylistProvider>
                   </BookCountProvider>
                   <ToastContainer toastClassName="!text-white" />
                   <Toaster position="top-right" reverseOrder={false} />

@@ -19,6 +19,7 @@ import ProductsFlashSaleBlock from "@containers/product-flash-sale-block";
 import HireDesignerAncient from "@containers/buy-designer-ancient";
 import CategoryBlock from "@containers/category-block";
 import BlogSection from "@containers/blog-section";
+import TrendingSongsFeed from "@components/music/feeds/trending-songs-feed";
 
 export default function Home() {
   const sectionCommonStyle = "mb-7 md:mb-10 lg:mb-12 xl:mb-14 2xl:mb-[75px]";
@@ -69,6 +70,15 @@ export default function Home() {
           type="new-arrival"
           limit={20}
           sectionHeading="New Arrivals"
+          className={sectionCommonStyle}
+          showViewAll={true}
+        />
+
+        {/* Trending Songs Section */}
+        <TrendingSongsFeed
+          type="trending"
+          limit={8}
+          sectionHeading="Trending Sufi Kalam"
           className={sectionCommonStyle}
           showViewAll={true}
         />

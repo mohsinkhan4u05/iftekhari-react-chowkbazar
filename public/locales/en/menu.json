@@ -91,5 +91,11 @@
   "menu-jewelry": "Jewelry",
   "menu-sunglasses": "Sunglasses",
   "menu-sneakers": "Sneakers",
-  "menu-my-library": "My Library"
+  "menu-my-library": "My Library",
+  "menu-music": "Sufi Music",
+  "menu-music-library": "Music Library",
+  "menu-albums": "Albums",
+  "menu-artists": "Artists",
+  "menu-tracks": "Tracks",
+  "menu-playlists": "Playlists"
 }
