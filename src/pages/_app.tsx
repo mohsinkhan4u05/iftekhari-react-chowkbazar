@@ -67,40 +67,40 @@ const CustomApp = ({
 
   return (
     <SessionProvider session={session}>
-      <div
-        className="bg-white text-black min-h-screen"
-        style={{ colorScheme: "light" }}
-      >
-        <RouteLoader />
-        <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
-          <QueryClientProvider client={queryClientRef.current}>
-            {/* @ts-ignore */}
-            <HydrationBoundary state={pageProps.dehydratedState}>
+      <MusicPlayerProvider>
+        <div
+          className="bg-white text-black min-h-screen"
+          style={{ colorScheme: "light" }}
+        >
+          <RouteLoader />
+          <AnimatePresence mode="wait" onExitComplete={handleExitComplete}>
+            <QueryClientProvider client={queryClientRef.current}>
               {/* @ts-ignore */}
-              <ManagedUIContext>
-                <Layout pageProps={pageProps}>
-                  <DefaultSeo />
-                  <BookCountProvider>
-                    <PlaylistProvider>
-                      <MusicPlayerProvider>
+              <HydrationBoundary state={pageProps.dehydratedState}>
+                {/* @ts-ignore */}
+                <ManagedUIContext>
+                  <Layout pageProps={pageProps}>
+                    <DefaultSeo />
+                    <BookCountProvider>
+                      <PlaylistProvider>
                         <Component {...pageProps} key={router.route} />
-                        <ClientOnly>
-                          <MusicPlayer />
-                        </ClientOnly>
-                      </MusicPlayerProvider>
-                    </PlaylistProvider>
-                  </BookCountProvider>
-                  <ToastContainer toastClassName="!text-white" />
-                  <Toaster position="top-right" reverseOrder={false} />
-                </Layout>
-                <ManagedModal />
-                <ManagedDrawer />
-              </ManagedUIContext>
-            </HydrationBoundary>
-            {/* <ReactQueryDevtools /> */}
-          </QueryClientProvider>
-        </AnimatePresence>
-      </div>
+                      </PlaylistProvider>
+                    </BookCountProvider>
+                    <ToastContainer toastClassName="!text-white" />
+                    <Toaster position="top-right" reverseOrder={false} />
+                  </Layout>
+                  <ManagedModal />
+                  <ManagedDrawer />
+                </ManagedUIContext>
+              </HydrationBoundary>
+              {/* <ReactQueryDevtools /> */}
+            </QueryClientProvider>
+          </AnimatePresence>
+          <ClientOnly>
+            <MusicPlayer />
+          </ClientOnly>
+        </div>
+      </MusicPlayerProvider>
     </SessionProvider>
   );
 };

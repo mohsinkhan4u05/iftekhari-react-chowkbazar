@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../framework/lib/db";
+// @ts-ignore
+import sql from "mssql";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,10 +12,24 @@ export default async function handler(
   }
 
   try {
+    const { search = "", limit = 50 } = req.query;
     const pool = await getConnection();
+    const request = pool.request();
 
-    const result = await pool.request().query(`
-      SELECT 
+    // Build WHERE clause
+    let whereClause = "WHERE a.isActive = 1";
+
+    if (search) {
+      whereClause +=
+        " AND (a.title LIKE @search OR a.artist LIKE @search OR a.genre LIKE @search)";
+      request.input("search", sql.VarChar, `%${search}%`);
+    }
+
+    // Add limit
+    request.input("limit", sql.Int, Number(limit));
+
+    const result = await request.query(`
+      SELECT TOP (@limit)
         a.id AS albumId,
         a.title AS albumTitle,
         a.artist AS albumArtist,
@@ -41,12 +57,12 @@ export default async function handler(
           FOR JSON PATH
         ) AS tracks
       FROM [Iftekhari].[Albums] a
-      WHERE a.isActive = 1
+      ${whereClause}
       ORDER BY a.id
     `);
 
     // Parse tracks JSON string into JS array
-    const albums = result.recordset.map((row) => ({
+    const albums = result.recordset.map((row: any) => ({
       id: row.albumId,
       title: row.albumTitle,
       artist: row.albumArtist,

@@ -1,221 +1,171 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getConnection } from "../../../../../framework/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]";
-import { getConnection } from "../../../../../framework/lib/db";
+// @ts-ignore
+import sql from "mssql";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  try {
-    const session = await getServerSession(req, res, authOptions);
-    if (!session?.user?.email) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+  const session = await getServerSession(req, res, authOptions);
 
-    const { id: playlistId } = req.query;
-    if (!playlistId || typeof playlistId !== "string") {
-      return res.status(400).json({ error: "Invalid playlist ID" });
+  if (!session?.user?.email) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const userId = session.user.email;
+  const { id: playlistId } = req.query;
+
+  if (!playlistId || typeof playlistId !== "string") {
+    return res.status(400).json({ message: "Playlist ID is required" });
+  }
+
+  switch (req.method) {
+    case "POST":
+      return handleAddTrack(req, res, userId, playlistId);
+    case "DELETE":
+      return handleRemoveTrack(req, res, userId, playlistId);
+    default:
+      return res.status(405).json({ message: "Method Not Allowed" });
+  }
+}
+
+async function handleAddTrack(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string,
+  playlistId: string
+) {
+  try {
+    const { trackId } = req.body;
+
+    if (!trackId) {
+      return res.status(400).json({ message: "Track ID is required" });
     }
 
     const pool = await getConnection();
 
-    // Get user ID and verify playlist ownership
-    const userResult = await pool
+    // Check if playlist exists and belongs to user
+    const playlistCheck = await pool
       .request()
-      .input("email", session.user.email)
-      .query("SELECT Id FROM Iftekhari.IftekhariUsers WHERE Email = @email");
-
-    if (userResult.recordset.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const userId = userResult.recordset[0].Id;
-
-    // Verify playlist exists and user owns it
-    const playlistResult = await pool
-      .request()
-      .input("playlistId", playlistId)
-      .input("userId", userId).query(`
-        SELECT Id FROM Iftekhari.Playlists 
-        WHERE Id = @playlistId AND UserId = @userId AND IsDeleted = 0
+      .input("playlistId", sql.Int, playlistId)
+      .input("userId", sql.VarChar, userId).query(`
+        SELECT id FROM [Iftekhari].[PlaylistsNew]
+        WHERE id = @playlistId AND userId = @userId AND isActive = 1
       `);
 
-    if (playlistResult.recordset.length === 0) {
-      return res.status(404).json({ error: "Playlist not found" });
+    if (playlistCheck.recordset.length === 0) {
+      return res.status(404).json({ message: "Playlist not found" });
     }
 
-    if (req.method === "POST") {
-      // Add track to playlist
-      const { trackId } = req.body;
+    // Check if track exists
+    const trackCheck = await pool.request().input("trackId", sql.Int, trackId)
+      .query(`
+        SELECT id FROM [Iftekhari].[Tracks]
+        WHERE id = @trackId AND isActive = 1
+      `);
 
-      if (!trackId) {
-        return res.status(400).json({ error: "Track ID is required" });
-      }
-
-      // Verify track exists
-      const trackResult = await pool
-        .request()
-        .input("trackId", trackId)
-        .query("SELECT Id FROM Iftekhari.Tracks WHERE Id = @trackId");
-
-      if (trackResult.recordset.length === 0) {
-        return res.status(404).json({ error: "Track not found" });
-      }
-
-      // Check if track is already in playlist
-      const existingResult = await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("trackId", trackId).query(`
-          SELECT Id FROM Iftekhari.PlaylistTracks 
-          WHERE PlaylistId = @playlistId AND TrackId = @trackId
-        `);
-
-      if (existingResult.recordset.length > 0) {
-        return res
-          .status(200)
-          .json({ 
-            message: "Track already exists in playlist",
-            alreadyExists: true,
-            trackId: trackId 
-          });
-      }
-
-      // Get next position
-      const positionResult = await pool
-        .request()
-        .input("playlistId", playlistId).query(`
-          SELECT ISNULL(MAX(Position), 0) + 1 as NextPosition 
-          FROM Iftekhari.PlaylistTracks 
-          WHERE PlaylistId = @playlistId
-        `);
-
-      const nextPosition = positionResult.recordset[0].NextPosition;
-
-      // Add track to playlist
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("trackId", trackId)
-        .input("position", nextPosition)
-        .input("addedAt", new Date()).query(`
-          INSERT INTO Iftekhari.PlaylistTracks (PlaylistId, TrackId, Position, AddedAt)
-          VALUES (@playlistId, @trackId, @position, @addedAt)
-        `);
-
-      // Update playlist updated time
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("updatedAt", new Date()).query(`
-          UPDATE Iftekhari.Playlists 
-          SET UpdatedAt = @updatedAt 
-          WHERE Id = @playlistId
-        `);
-
-      return res.status(201).json({
-        message: "Track added to playlist successfully",
-        trackId: trackId,
-        position: nextPosition,
-      });
-    } else if (req.method === "DELETE") {
-      // Remove track from playlist
-      const { trackId } = req.body;
-
-      if (!trackId) {
-        return res.status(400).json({ error: "Track ID is required" });
-      }
-
-      // Check if track is in playlist
-      const existingResult = await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("trackId", trackId).query(`
-          SELECT Position FROM Iftekhari.PlaylistTracks 
-          WHERE PlaylistId = @playlistId AND TrackId = @trackId
-        `);
-
-      if (existingResult.recordset.length === 0) {
-        return res.status(404).json({ error: "Track not found in playlist" });
-      }
-
-      const removedPosition = existingResult.recordset[0].Position;
-
-      // Remove track from playlist
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("trackId", trackId).query(`
-          DELETE FROM Iftekhari.PlaylistTracks 
-          WHERE PlaylistId = @playlistId AND TrackId = @trackId
-        `);
-
-      // Reorder remaining tracks
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("removedPosition", removedPosition).query(`
-          UPDATE Iftekhari.PlaylistTracks 
-          SET Position = Position - 1 
-          WHERE PlaylistId = @playlistId AND Position > @removedPosition
-        `);
-
-      // Update playlist updated time
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("updatedAt", new Date()).query(`
-          UPDATE Iftekhari.Playlists 
-          SET UpdatedAt = @updatedAt 
-          WHERE Id = @playlistId
-        `);
-
-      return res.status(200).json({
-        message: "Track removed from playlist successfully",
-        trackId: trackId,
-      });
-    } else if (req.method === "PUT") {
-      // Reorder tracks in playlist
-      const { tracks } = req.body;
-
-      if (!Array.isArray(tracks)) {
-        return res.status(400).json({ error: "Tracks array is required" });
-      }
-
-      // Update positions for all tracks
-      for (let i = 0; i < tracks.length; i++) {
-        const trackId = tracks[i];
-        await pool
-          .request()
-          .input("playlistId", playlistId)
-          .input("trackId", trackId)
-          .input("position", i + 1).query(`
-            UPDATE Iftekhari.PlaylistTracks 
-            SET Position = @position 
-            WHERE PlaylistId = @playlistId AND TrackId = @trackId
-          `);
-      }
-
-      // Update playlist updated time
-      await pool
-        .request()
-        .input("playlistId", playlistId)
-        .input("updatedAt", new Date()).query(`
-          UPDATE Iftekhari.Playlists 
-          SET UpdatedAt = @updatedAt 
-          WHERE Id = @playlistId
-        `);
-
-      return res.status(200).json({
-        message: "Playlist tracks reordered successfully",
-      });
-    } else {
-      res.setHeader("Allow", ["POST", "DELETE", "PUT"]);
-      return res.status(405).json({ error: "Method not allowed" });
+    if (trackCheck.recordset.length === 0) {
+      return res.status(404).json({ message: "Track not found" });
     }
+
+    // Check if track is already in playlist
+    const existingTrack = await pool
+      .request()
+      .input("playlistId", sql.Int, playlistId)
+      .input("trackId", sql.Int, trackId).query(`
+        SELECT id FROM [Iftekhari].[PlaylistTracksNew]
+        WHERE playlistId = @playlistId AND trackId = @trackId
+      `);
+
+    if (existingTrack.recordset.length > 0) {
+      return res.status(409).json({
+        message: "Track already exists in playlist",
+        alreadyExists: true,
+      });
+    }
+
+    // Get the next position for the track
+    const positionResult = await pool
+      .request()
+      .input("playlistId", sql.Int, playlistId).query(`
+        SELECT COALESCE(MAX(position), 0) + 1 as nextPosition
+        FROM [Iftekhari].[PlaylistTracksNew]
+        WHERE playlistId = @playlistId
+      `);
+
+    const nextPosition = positionResult.recordset[0].nextPosition;
+
+    // Add track to playlist
+    await pool
+      .request()
+      .input("playlistId", sql.Int, playlistId)
+      .input("trackId", sql.Int, trackId)
+      .input("addedBy", sql.VarChar, userId)
+      .input("position", sql.Int, nextPosition).query(`
+        INSERT INTO [Iftekhari].[PlaylistTracksNew] (playlistId, trackId, addedBy, position)
+        VALUES (@playlistId, @trackId, @addedBy, @position)
+      `);
+
+    res.status(200).json({
+      message: "Track added to playlist successfully",
+      success: true,
+      alreadyExists: false,
+    });
   } catch (error) {
-    console.error("Playlist tracks API error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Add Track to Playlist API Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+async function handleRemoveTrack(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string,
+  playlistId: string
+) {
+  try {
+    const { trackId } = req.body;
+
+    if (!trackId) {
+      return res.status(400).json({ message: "Track ID is required" });
+    }
+
+    const pool = await getConnection();
+
+    // Check if playlist exists and belongs to user
+    const playlistCheck = await pool
+      .request()
+      .input("playlistId", sql.Int, playlistId)
+      .input("userId", sql.VarChar, userId).query(`
+        SELECT id FROM [Iftekhari].[PlaylistsNew]
+        WHERE id = @playlistId AND userId = @userId AND isActive = 1
+      `);
+
+    if (playlistCheck.recordset.length === 0) {
+      return res.status(404).json({ message: "Playlist not found" });
+    }
+
+    // Remove track from playlist
+    const result = await pool
+      .request()
+      .input("playlistId", sql.Int, playlistId)
+      .input("trackId", sql.Int, trackId).query(`
+        DELETE FROM [Iftekhari].[PlaylistTracksNew]
+        WHERE playlistId = @playlistId AND trackId = @trackId
+      `);
+
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: "Track not found in playlist" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Track removed from playlist successfully" });
+  } catch (error) {
+    console.error("Remove Track from Playlist API Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }

@@ -64,7 +64,7 @@ export default async function handler(
 
       case "PUT":
         try {
-          const { title, artist, description } = req.body;
+          const { title, artist, description, coverImageUrl } = req.body;
 
           if (!title) {
             return res.status(400).json({ message: "Title is required" });
@@ -79,6 +79,7 @@ export default async function handler(
           request.input("title", sql.NVarChar, title);
           request.input("artist", sql.NVarChar, artist);
           request.input("description", sql.NVarChar, description || "");
+          request.input("coverImageUrl", sql.NVarChar, coverImageUrl || "");
           request.input("updatedAt", sql.DateTime2, new Date());
 
           const result = await request.query(`
@@ -86,6 +87,7 @@ export default async function handler(
             SET title = @title, 
                 artist = @artist, 
                 description = @description, 
+                coverImageUrl = @coverImageUrl,
                 updatedAt = @updatedAt
             WHERE id = @AlbumId
           `);

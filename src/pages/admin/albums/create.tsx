@@ -5,6 +5,7 @@ import Container from "@components/ui/container";
 import withAdminAuth from "@components/auth/withAdminAuth";
 import { FiSave, FiArrowLeft } from "react-icons/fi";
 import Link from "next/link";
+import { CoverImageUploader } from "@components/ui/CoverImageUploader";
 
 interface Artist {
   id: string;
@@ -22,17 +23,14 @@ function CreateAlbum() {
     releaseDate: "",
     genre: "",
     description: "",
+    coverImageUrl: "", // <-- new field for album cover
   });
-
-  console.log("CreateAlbum cformdata ", formData);
 
   useEffect(() => {
     // Fetch artists for dropdown
     fetch("/api/artists")
       .then((res) => res.json())
-      .then((data) => {
-        setArtists(data || []);
-      })
+      .then((data) => setArtists(data || []))
       .catch((error) => {
         console.error("Error fetching artists:", error);
         setArtists([]);
@@ -46,9 +44,7 @@ function CreateAlbum() {
     try {
       const response = await fetch("/api/albums", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -136,14 +132,14 @@ function CreateAlbum() {
               >
                 <option value="">Select an artist</option>
                 {artists.map((artist) => (
-                  <option key={artist.name} value={artist.name}>
+                  <option key={artist.id} value={artist.id}>
                     {artist.name}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Description */}
+            {/* Album Description */}
             <div>
               <label
                 htmlFor="description"
@@ -159,6 +155,23 @@ function CreateAlbum() {
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 resize-none"
                 placeholder="Album description..."
+              />
+            </div>
+
+            {/* Album Cover Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Album Cover
+              </label>
+              <CoverImageUploader
+                onUploadComplete={(url) => {
+                  setFormData((prev) => ({ ...prev, coverImageUrl: url }));
+                }}
+                currentImage={formData.coverImageUrl}
+                onRemove={() => {
+                  setFormData((prev) => ({ ...prev, coverImageUrl: "" }));
+                }}
+                className="w-full"
               />
             </div>
 

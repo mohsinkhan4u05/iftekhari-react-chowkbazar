@@ -1,0 +1,217 @@
+/* Custom scrollbar styles for music redesign */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Custom scrollbar for Firefox */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+/* Transition classes for smooth animations */
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
+
+.transition-colors {
+  transition: colors 0.2s ease-in-out;
+}
+
+.transition-transform {
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Custom focus styles */
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-ring:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Button hover effects */
+.btn-hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+
+.btn-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-spotify {
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+}
+
+/* Text gradients */
+.text-gradient-spotify {
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive grid utilities */
+.grid-cols-responsive {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+@media (min-width: 640px) {
+  .grid-cols-responsive-sm {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .grid-cols-responsive-md {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-responsive-lg {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+/* Custom shadows */
+.shadow-spotify {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-spotify-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Rounded corners */
+.rounded-spotify {
+  border-radius: 8px;
+}
+
+.rounded-spotify-lg {
+  border-radius: 12px;
+}
+
+/* Border utilities */
+.border-spotify {
+  border: 1px solid #2d3748;
+}
+
+.border-spotify-light {
+  border: 1px solid #4a5568;
+}
+
+/* Background utilities */
+.bg-spotify-dark {
+  background-color: #121212;
+}
+
+.bg-spotify-darker {
+  background-color: #0a0a0a;
+}
+
+.bg-spotify-card {
+  background-color: #181818;
+}
+
+/* Text utilities */
+.text-spotify-primary {
+  color: #ffffff;
+}
+
+.text-spotify-secondary {
+  color: #b3b3b3;
+}
+
+.text-spotify-tertiary {
+  color: #7a7a7a;
+}
+
+/* Input styles */
+.input-spotify {
+  background-color: #282828;
+  border: 1px solid #3e3e3e;
+  color: #ffffff;
+}
+
+.input-spotify:focus {
+  border-color: #1db954;
+  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+/* Button styles */
+.btn-spotify {
+  background-color: #1db954;
+  color: #ffffff;
+  border: none;
+  font-weight: bold;
+  padding: 8px 32px;
+  border-radius: 20px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-spotify:hover {
+  background-color: #1ed760;
+  transform: scale(1.04);
+}
+
+.btn-spotify:active {
+  transform: scale(0.98);
+}
+
+.btn-spotify-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  font-weight: bold;
+  padding: 8px 32px;
+  border-radius: 20px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-spotify-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.04);
+}
+
+.btn-spotify-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Hide scrollbar for trending songs section */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}

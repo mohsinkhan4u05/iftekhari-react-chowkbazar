@@ -6,6 +6,9 @@
 @import "blog-enhancements.css";
 @import "blog-responsive.css";
 
+/* Music Redesign */
+@import "music-redesign.css";
+
 /* Write your own custom base styles here */
 @layer base {
   /* html {

@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../framework/lib/db";
+// @ts-ignore
+import sql from "mssql";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,10 +12,24 @@ export default async function handler(
   }
 
   try {
+    const { search = "", limit = 50 } = req.query;
     const pool = await getConnection();
+    const request = pool.request();
 
-    const result = await pool.request().query(`
-      SELECT 
+    // Build WHERE clause
+    let whereClause = "WHERE ar.isActive = 1";
+
+    if (search) {
+      whereClause +=
+        " AND (ar.name LIKE @search OR ar.bio LIKE @search OR ar.genre LIKE @search)";
+      request.input("search", sql.VarChar, `%${search}%`);
+    }
+
+    // Add limit
+    request.input("limit", sql.Int, Number(limit));
+
+    const result = await request.query(`
+      SELECT TOP (@limit)
         ar.id AS artistId,
         ar.name,
         ar.bio,
@@ -51,13 +67,13 @@ export default async function handler(
         al.updatedAt AS albumUpdatedAt
       FROM [Iftekhari].[Artists] ar
       LEFT JOIN [Iftekhari].[Albums] al ON ar.name = al.artist
-      WHERE ar.isActive = 1
+      ${whereClause}
       ORDER BY ar.id, al.id
     `);
 
     const artistMap = new Map();
 
-    result.recordset.forEach((row) => {
+    result.recordset.forEach((row: any) => {
       if (!artistMap.has(row.artistId)) {
         artistMap.set(row.artistId, {
           id: row.artistId,

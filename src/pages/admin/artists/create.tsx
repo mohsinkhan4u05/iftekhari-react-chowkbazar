@@ -5,6 +5,8 @@ import Container from "@components/ui/container";
 import withAdminAuth from "@components/auth/withAdminAuth";
 import { FiSave, FiArrowLeft } from "react-icons/fi";
 import Link from "next/link";
+import { CoverImageUploader } from "@components/ui/CoverImageUploader";
+// or BunnyImageUploader if you prefer Bunny
 
 function CreateArtist() {
   const router = useRouter();
@@ -13,6 +15,7 @@ function CreateArtist() {
     name: "",
     genre: "",
     bio: "",
+    profileImageUrl: "", // added for artist image
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,9 +25,7 @@ function CreateArtist() {
     try {
       const response = await fetch("/api/artists", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -42,11 +43,15 @@ function CreateArtist() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -72,7 +77,10 @@ function CreateArtist() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Artist Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Artist Name *
               </label>
               <input
@@ -89,7 +97,10 @@ function CreateArtist() {
 
             {/* Genre */}
             <div>
-              <label htmlFor="genre" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="genre"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Primary Genre *
               </label>
               <select
@@ -118,7 +129,10 @@ function CreateArtist() {
 
             {/* Bio */}
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Biography
               </label>
               <textarea
@@ -132,6 +146,23 @@ function CreateArtist() {
               />
             </div>
 
+            {/* Artist Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Artist Image
+              </label>
+              <CoverImageUploader
+                onUploadComplete={(url) => {
+                  setFormData((prev) => ({ ...prev, profileImageUrl: url }));
+                }}
+                currentImage={formData.profileImageUrl}
+                onRemove={() => {
+                  setFormData((prev) => ({ ...prev, profileImageUrl: "" }));
+                }}
+                className="w-full"
+              />
+            </div>
+
             {/* Submit Button */}
             <div className="flex items-center gap-4 pt-6">
               <button
@@ -142,7 +173,6 @@ function CreateArtist() {
                 <FiSave className="w-4 h-4" />
                 {loading ? "Creating..." : "Create Artist"}
               </button>
-              
               <Link
                 href="/admin/artists"
                 className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors font-medium"

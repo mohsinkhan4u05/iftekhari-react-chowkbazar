@@ -1,115 +1,126 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getConnection } from "../../../../framework/lib/db";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
-import { getConnection } from "../../../../framework/lib/db";
+// @ts-ignore
+import sql from "mssql";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session?.user?.email) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const userId = session.user.email;
+
+  switch (req.method) {
+    case "GET":
+      return handleGetPlaylists(req, res, userId);
+    case "POST":
+      return handleCreatePlaylist(req, res, userId);
+    default:
+      return res.status(405).json({ message: "Method Not Allowed" });
+  }
+}
+
+async function handleGetPlaylists(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string
+) {
   try {
-    // Get user session
-    const session = await getServerSession(req, res, authOptions);
-    if (!session?.user?.email) {
-      return res.status(401).json({ error: "Unauthorized" });
+    const pool = await getConnection();
+    const request = pool.request();
+
+    const result = await request.input("userId", sql.VarChar, userId).query(`
+        SELECT 
+          p.id,
+          p.name,
+          p.description,
+          p.coverImageUrl,
+          p.isPublic,
+          p.totalTracks,
+          p.totalDuration,
+          p.createdAt,
+          p.updatedAt,
+          (
+            SELECT TOP 1 t.coverImage
+            FROM [Iftekhari].[PlaylistTracksNew] pt
+            INNER JOIN [Iftekhari].[Tracks] t ON pt.trackId = t.id
+            WHERE pt.playlistId = p.id AND t.isActive = 1
+            ORDER BY pt.position
+          ) AS firstTrackCover
+        FROM [Iftekhari].[PlaylistsNew] p
+        WHERE p.userId = @userId AND p.isActive = 1
+        ORDER BY p.updatedAt DESC
+      `);
+
+    const playlists = result.recordset.map((row: any) => ({
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      coverImageUrl: row.coverImageUrl || row.firstTrackCover,
+      isPublic: row.isPublic,
+      totalTracks: row.totalTracks,
+      totalDuration: row.totalDuration,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    }));
+
+    res.status(200).json(playlists);
+  } catch (error) {
+    console.error("Get Playlists API Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+async function handleCreatePlaylist(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string
+) {
+  try {
+    const { name, description, coverImageUrl, isPublic = true } = req.body;
+
+    if (!name || name.trim().length === 0) {
+      return res.status(400).json({ message: "Playlist name is required" });
     }
 
     const pool = await getConnection();
+    const request = pool.request();
 
-    if (req.method === "GET") {
-      // Get user's playlists
-      const userResult = await pool
-        .request()
-        .input("email", session.user.email)
-        .query("SELECT Id FROM Iftekhari.IftekhariUsers WHERE Email = @email");
+    const result = await request
+      .input("name", sql.NVarChar, name.trim())
+      .input("description", sql.NVarChar, description || null)
+      .input("coverImageUrl", sql.NVarChar, coverImageUrl || null)
+      .input("isPublic", sql.Bit, isPublic)
+      .input("userId", sql.VarChar, userId).query(`
+        INSERT INTO [Iftekhari].[PlaylistsNew] (name, description, coverImageUrl, isPublic, userId)
+        OUTPUT INSERTED.id, INSERTED.name, INSERTED.description, INSERTED.coverImageUrl, 
+               INSERTED.isPublic, INSERTED.totalTracks, INSERTED.totalDuration, 
+               INSERTED.createdAt, INSERTED.updatedAt
+        VALUES (@name, @description, @coverImageUrl, @isPublic, @userId)
+      `);
 
-      if (userResult.recordset.length === 0) {
-        return res.status(404).json({ error: "User not found" });
-      }
+    const newPlaylist = result.recordset[0];
 
-      const userId = userResult.recordset[0].Id;
-
-      // Get playlists with track count
-      const playlistsResult = await pool.request().input("userId", userId)
-        .query(`
-          SELECT 
-            p.Id,
-            p.Name,
-            p.Description,
-            p.CoverImage,
-            p.CreatedAt,
-            p.UpdatedAt,
-            COUNT(pt.TrackId) as TrackCount
-          FROM Iftekhari.Playlists p
-          LEFT JOIN Iftekhari.PlaylistTracks pt ON p.Id = pt.PlaylistId
-          WHERE p.UserId = @userId AND p.IsDeleted = 0
-          GROUP BY p.Id, p.Name, p.Description, p.CoverImage, p.CreatedAt, p.UpdatedAt
-          ORDER BY p.UpdatedAt DESC
-        `);
-
-      const playlists = playlistsResult.recordset.map((playlist) => ({
-        id: playlist.Id.toString(),
-        name: playlist.Name,
-        description: playlist.Description,
-        cover: playlist.CoverImage,
-        createdAt: playlist.CreatedAt,
-        updatedAt: playlist.UpdatedAt,
-        trackCount: playlist.TrackCount,
-      }));
-
-      return res.status(200).json({ playlists });
-    } else if (req.method === "POST") {
-      // Create new playlist
-      const { name, description, coverImage } = req.body;
-
-      if (!name || name.trim().length === 0) {
-        return res.status(400).json({ error: "Playlist name is required" });
-      }
-
-      const userResult = await pool
-        .request()
-        .input("email", session.user.email)
-        .query("SELECT Id FROM Iftekhari.IftekhariUsers WHERE Email = @email");
-
-      if (userResult.recordset.length === 0) {
-        return res.status(404).json({ error: "User not found" });
-      }
-
-      const userId = userResult.recordset[0].Id;
-
-      // Create playlist
-      const result = await pool
-        .request()
-        .input("userId", userId)
-        .input("name", name.trim())
-        .input("description", description?.trim() || "")
-        .input("coverImage", coverImage || null)
-        .input("createdAt", new Date())
-        .input("updatedAt", new Date()).query(`
-          INSERT INTO Iftekhari.Playlists (UserId, Name, Description, CoverImage, CreatedAt, UpdatedAt, IsDeleted)
-          OUTPUT INSERTED.Id
-          VALUES (@userId, @name, @description, @coverImage, @createdAt, @updatedAt, 0)
-        `);
-
-      const playlistId = result.recordset[0].Id;
-
-      const newPlaylist = {
-        id: playlistId.toString(),
-        name: name.trim(),
-        description: description?.trim() || "",
-        cover: coverImage || null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        trackCount: 0,
-      };
-
-      return res.status(201).json({ playlist: newPlaylist });
-    } else {
-      res.setHeader("Allow", ["GET", "POST"]);
-      return res.status(405).json({ error: "Method not allowed" });
-    }
+    res.status(201).json({
+      id: newPlaylist.id,
+      name: newPlaylist.name,
+      description: newPlaylist.description,
+      coverImageUrl: newPlaylist.coverImageUrl,
+      isPublic: newPlaylist.isPublic,
+      totalTracks: newPlaylist.totalTracks,
+      totalDuration: newPlaylist.totalDuration,
+      createdAt: newPlaylist.createdAt,
+      updatedAt: newPlaylist.updatedAt,
+    });
   } catch (error) {
-    console.error("Playlists API error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Create Playlist API Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }

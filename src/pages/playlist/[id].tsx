@@ -1,97 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { GetStaticProps, GetStaticPaths } from "next";
+import { NextPage } from "next";
 import Layout from "@components/layout/layout";
-import TrackCard from "@components/music/track-card";
-import { Track } from "@contexts/music-player.context";
-import { FaPlay, FaSpinner, FaMusic, FaArrowLeft } from "react-icons/fa";
-import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { usePlaylistQuery, useUpdatePlaylistMutation, useDeletePlaylistMutation, useRemoveTrackFromPlaylistMutation } from "../../framework/music/get-playlists";
 import { useMusicPlayer } from "@contexts/music-player.context";
-import { usePlaylist } from "@contexts/playlist.context";
-import { RemoveTrackModal } from "@components/music/remove-track-modal";
+import { useSession } from "next-auth/react";
+import TrackCard from "@components/music/track-card";
+import { FaPlay, FaPause, FaArrowLeft, FaEdit, FaTrash, FaEye, FaEyeSlash } from "react-icons/fa";
 
-interface Playlist {
-  id: string;
-  name: string;
-  description?: string;
-  cover?: string;
-  trackCount: number;
-  createdAt: string;
-  updatedAt: string;
-  tracks: Track[];
-}
-
-const PlaylistDetail: React.FC = () => {
+const PlaylistPage: NextPage = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: playlistId } = router.query;
   const { data: session } = useSession();
-  const { playTrack } = useMusicPlayer();
-  const { removeTrackFromPlaylist } = usePlaylist();
-  const [playlist, setPlaylist] = useState<Playlist | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [trackToRemove, setTrackToRemove] = useState<{ id: string; title: string } | null>(null);
+  const { state, playTrack, pause, resume } = useMusicPlayer();
+  
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (id && typeof id === 'string') {
-      fetchPlaylistDetails();
-    }
-  }, [id, session]);
+  const { data: playlist, isLoading, error } = usePlaylistQuery(
+    playlistId as string,
+    !!playlistId
+  );
 
-  const fetchPlaylistDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/music/playlists/${id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch playlist');
-      }
-      const data = await response.json();
-      setPlaylist(data.playlist);
-    } catch (err) {
-      setError('Error loading playlist');
-      console.error('Error fetching playlist:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const updatePlaylistMutation = useUpdatePlaylistMutation();
+  const deletePlaylistMutation = useDeletePlaylistMutation();
+  const removeTrackMutation = useRemoveTrackFromPlaylistMutation();
 
   const handlePlayAll = () => {
-    if (playlist && playlist.tracks.length > 0) {
+    if (!playlist?.tracks?.length) return;
+
+    const isPlayingThisPlaylist = state.currentPlaylistName === playlist.name;
+    const isPlaying = state.isPlaying && isPlayingThisPlaylist;
+
+    if (isPlayingThisPlaylist) {
+      isPlaying ? pause() : resume();
+    } else {
       playTrack(playlist.tracks[0], playlist.tracks, playlist.name);
     }
   };
 
-  const handleRemoveTrack = async (trackId: string) => {
-    if (!playlist?.id) return;
-    
+  const handleDeletePlaylist = async () => {
+    if (!playlist || !confirm("Are you sure you want to delete this playlist?")) return;
+
     try {
-      const success = await removeTrackFromPlaylist(playlist.id, trackId);
-      if (success) {
-        // Refresh playlist data
-        await fetchPlaylistDetails();
-      }
+      await deletePlaylistMutation.mutateAsync(playlist.id);
+      router.push("/my-playlists");
     } catch (error) {
-      console.error('Error removing track from playlist:', error);
-      throw error; // Re-throw to let modal handle the error
+      console.error("Error deleting playlist:", error);
+      alert("Failed to delete playlist. Please try again.");
     }
   };
 
-  const openRemoveModal = (track: Track) => {
-    setTrackToRemove({ id: track.id, title: track.title });
-  };
+  const handleRemoveTrack = async (trackId: string) => {
+    if (!playlist) return;
 
-  const closeRemoveModal = () => {
-    setTrackToRemove(null);
-  };
-
-  const confirmRemoveTrack = async () => {
-    if (trackToRemove) {
-      await handleRemoveTrack(trackToRemove.id);
+    try {
+      await removeTrackMutation.mutateAsync({
+        playlistId: playlist.id,
+        trackId,
+      });
+    } catch (error) {
+      console.error("Error removing track:", error);
+      alert("Failed to remove track. Please try again.");
     }
   };
 
-  if (loading) {
+  const formatDuration = (seconds: number) => {
+    if (!seconds) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
@@ -101,144 +83,154 @@ const PlaylistDetail: React.FC = () => {
 
   if (error || !playlist) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <FaMusic className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Playlist not found</h2>
-          <p className="text-gray-600 mb-4">{error || 'The playlist you are looking for does not exist.'}</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Playlist not found
+          </h1>
           <button
-            onClick={() => router.push('/music')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            onClick={() => router.push("/my-playlists")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            Back to Music
+            Back to Playlists
           </button>
         </div>
       </div>
     );
   }
 
+  const isPlayingThisPlaylist = state.currentPlaylistName === playlist.name;
+  const isPlaying = state.isPlaying && isPlayingThisPlaylist;
+  const isOwner = session?.user?.email === playlist.userId;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Navigation */}
         <button
-          onClick={() => router.push('/music')}
+          onClick={() => router.push('/my-playlists')}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors group"
         >
           <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back to Music Library</span>
+          <span className="font-medium">Back to Playlists</span>
         </button>
 
         {/* Playlist Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center gap-6">
-            {/* Playlist Cover */}
-            <div className="w-48 h-48 rounded-lg overflow-hidden flex-shrink-0">
-              {playlist.cover ? (
-                <img
-                  src={playlist.cover}
-                  alt={playlist.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <FaMusic className="w-16 h-16 mx-auto mb-2 opacity-80" />
-                    <p className="text-lg font-medium opacity-90">
-                      {playlist.name.charAt(0).toUpperCase()}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Playlist Info */}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{playlist.name}</h1>
-              <p className="text-gray-600 mb-4">
-                {playlist.description || "No description available"}
-              </p>
-              <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-                <span>{playlist.trackCount || 0} tracks</span>
-                <span>•</span>
-                <span>Created {new Date(playlist.createdAt).toLocaleDateString()}</span>
+        <div className="bg-white rounded-lg p-8 mb-8">
+          <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10">
+            {playlist?.coverImageUrl ? (
+              <img
+                src={playlist.coverImageUrl}
+                alt={playlist.name}
+                className="w-48 h-48 rounded-lg shadow-lg object-cover"
+              />
+            ) : (
+              <div className="w-48 h-48 rounded-lg bg-gray-400 flex items-center justify-center shadow-lg">
+                <span className="text-6xl font-bold text-gray-800">
+                  {playlist?.name?.charAt(0) || "P"}
+                </span>
               </div>
-              
-              {/* Play Button */}
-              {playlist.tracks && playlist.tracks.length > 0 && (
-                <button
-                  onClick={handlePlayAll}
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg"
-                >
-                  <FaPlay className="w-4 h-4" />
-                  Play All
-                </button>
+            )}
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start space-x-2 mb-2">
+                <h1 className="text-4xl font-bold text-gray-900">
+                  {playlist.name}
+                </h1>
+                {playlist.isPublic ? (
+                  <FaEye className="text-gray-500" size={20} />
+                ) : (
+                  <FaEyeSlash className="text-gray-500" size={20} />
+                )}
+              </div>
+              {playlist.description && (
+                <p className="text-gray-600 mb-4 max-w-md">
+                  {playlist.description}
+                </p>
               )}
+              <div className="flex flex-wrap justify-center md:justify-start items-center space-x-3 text-gray-600 mb-6">
+                <span>{playlist.totalTracks} songs</span>
+                <span>•</span>
+                <span>{formatDuration(playlist.totalDuration)}</span>
+                <span>•</span>
+                <span>{new Date(playlist.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-3">
+                {/* Play Button */}
+                {playlist.tracks.length > 0 && (
+                  <button
+                    onClick={handlePlayAll}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full flex items-center justify-center space-x-2 transition-colors shadow-lg hover:shadow-xl"
+                  >
+                    {isPlaying ? <FaPause size={20} /> : <FaPlay size={20} />}
+                    <span>{isPlaying ? "Pause" : "Play All"}</span>
+                  </button>
+                )}
+                
+                {/* Owner Actions */}
+                {isOwner && (
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setShowEditModal(true)}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                    >
+                      <FaEdit size={14} />
+                    </button>
+                    <button
+                      onClick={handleDeletePlaylist}
+                      className="px-4 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50 transition-colors"
+                    >
+                      <FaTrash size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tracks List */}
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Tracks</h2>
+        {/* Track List */}
+        <div className="mt-8 bg-white rounded-lg shadow">
+          <h2 className="text-xl font-semibold p-4 border-b border-gray-200">Tracks</h2>
+          <div className="divide-y divide-gray-100">
+            {playlist.tracks.length > 0 ? (
+              playlist.tracks.map((track, index) => (
+                <TrackCard
+                  key={track.id}
+                  track={track}
+                  playlist={playlist.tracks}
+                  playlistName={playlist.name}
+                  index={index}
+                  showRemoveButton={isOwner}
+                  onRemove={() => handleRemoveTrack(track.id)}
+                />
+              ))
+            ) : (
+              <div className="p-6 text-center text-gray-500">
+                No tracks in this playlist yet.
+              </div>
+            )}
           </div>
-          
-          {playlist.tracks && playlist.tracks.length > 0 ? (
-            <div className="divide-y divide-gray-200">
-              {playlist.tracks.map((track: Track, index: number) => (
-                <div key={track.id} className="p-4">
-                  <TrackCard 
-                    track={track} 
-                    index={index} 
-                    playlist={playlist.tracks}
-                    playlistName={playlist.name}
-                    showRemoveButton={true}
-                    onRemove={() => openRemoveModal(track)}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <FaMusic className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No tracks yet</h3>
-              <p className="text-gray-600">This playlist is empty. Add some tracks to get started!</p>
-            </div>
-          )}
         </div>
       </div>
-
-      {/* Remove Track Confirmation Modal */}
-      {trackToRemove && (
-        <RemoveTrackModal
-          isOpen={!!trackToRemove}
-          trackTitle={trackToRemove.title}
-          playlistName={playlist?.name || ''}
-          onClose={closeRemoveModal}
-          onConfirm={confirmRemoveTrack}
-        />
-      )}
     </div>
   );
 };
 
-PlaylistDetail.Layout = Layout;
+// @ts-ignore
+PlaylistPage.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export const getServerSideProps = async ({ locale }: any) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
+      ...(await serverSideTranslations(locale, [
+        "common",
+        "forms",
+        "menu",
+        "footer",
+      ])),
     },
   };
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  };
-};
-
-export default PlaylistDetail;
+export default PlaylistPage;
 

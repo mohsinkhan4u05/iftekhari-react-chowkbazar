@@ -5,41 +5,40 @@ import Container from "@components/ui/container";
 import withAdminAuth from "@components/auth/withAdminAuth";
 import { FiSave, FiArrowLeft } from "react-icons/fi";
 import Link from "next/link";
+import { CoverImageUploader } from "@components/ui/CoverImageUploader";
 
 interface Artist {
   id: string;
   name: string;
   genre: string;
   bio?: string;
+  profileImageUrl?: string;
 }
 
 function EditArtist() {
   const router = useRouter();
   const { id } = router.query;
+
   const [loading, setLoading] = useState(false);
   const [artistLoading, setArtistLoading] = useState(true);
-  const [artist, setArtist] = useState<Artist | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     genre: "",
     bio: "",
+    profileImageUrl: "",
   });
 
+  // Fetch artist details
   useEffect(() => {
     if (id && typeof id === "string") {
       fetch(`/api/artists/${id}`)
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          setArtist(data);
+        .then((res) => res.json())
+        .then((data: Artist) => {
           setFormData({
             name: data.name || "",
             genre: data.genre || "",
             bio: data.bio || "",
+            profileImageUrl: data.profileImageUrl || "",
           });
           setArtistLoading(false);
         })
@@ -56,13 +55,10 @@ function EditArtist() {
     if (!id) return;
 
     setLoading(true);
-
     try {
       const response = await fetch(`/api/artists/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
@@ -86,10 +82,7 @@ function EditArtist() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   if (artistLoading) {
@@ -97,27 +90,6 @@ function EditArtist() {
       <Container>
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
-        </div>
-      </Container>
-    );
-  }
-
-  if (!artist) {
-    return (
-      <Container>
-        <div className="py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Artist Not Found
-            </h1>
-            <Link
-              href="/admin/artists"
-              className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-xl hover:bg-accent/90 transition-colors font-medium"
-            >
-              <FiArrowLeft className="w-4 h-4" />
-              Back to Artists
-            </Link>
-          </div>
         </div>
       </Container>
     );
@@ -136,7 +108,7 @@ function EditArtist() {
             Back to Artists
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Edit Artist: {artist.name}
+            Edit Artist
           </h1>
         </div>
 
@@ -159,7 +131,6 @@ function EditArtist() {
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
-                placeholder="Enter artist name"
               />
             </div>
 
@@ -209,8 +180,24 @@ function EditArtist() {
                 value={formData.bio}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 resize-none"
-                placeholder="Artist biography..."
+                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-accent focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+              />
+            </div>
+
+            {/* Artist Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Artist Image
+              </label>
+              <CoverImageUploader
+                onUploadComplete={(url) =>
+                  setFormData((prev) => ({ ...prev, profileImageUrl: url }))
+                }
+                currentImage={formData.profileImageUrl}
+                onRemove={() =>
+                  setFormData((prev) => ({ ...prev, profileImageUrl: "" }))
+                }
+                className="w-full"
               />
             </div>
 
@@ -219,12 +206,11 @@ function EditArtist() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center gap-2 bg-accent text-black px-6 py-3 rounded-xl hover:bg-accent/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 bg-accent text-black px-6 py-3 rounded-xl hover:bg-accent/90 transition-colors font-medium disabled:opacity-50"
               >
                 <FiSave className="w-4 h-4" />
                 {loading ? "Updating..." : "Update Artist"}
               </button>
-
               <Link
                 href="/admin/artists"
                 className="inline-flex items-center gap-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors font-medium"

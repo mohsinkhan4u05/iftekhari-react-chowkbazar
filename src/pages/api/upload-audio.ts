@@ -19,13 +19,13 @@ export default async function handler(
   }
 
   console.log("=== UploadThing Audio Upload API Called ===");
-  
+
   // First, check environment variables
   if (!process.env.UPLOADTHING_TOKEN) {
     console.error("❌ UPLOADTHING_TOKEN not found in environment variables");
-    return res.status(500).json({ 
-      error: "UploadThing not configured", 
-      message: "UPLOADTHING_TOKEN environment variable is missing" 
+    return res.status(500).json({
+      error: "UploadThing not configured",
+      message: "UPLOADTHING_TOKEN environment variable is missing",
     });
   }
 
@@ -51,7 +51,7 @@ export default async function handler(
       name: file.originalFilename,
       size: file.size,
       type: file.mimetype,
-      path: file.filepath
+      path: file.filepath,
     });
 
     // Import UploadThing
@@ -70,23 +70,26 @@ export default async function handler(
 
     // Create File object for UploadThing
     console.log("🔄 Creating File object for UploadThing...");
-    
+
     const fileName = file.originalFilename || `audio-${Date.now()}.mp3`;
     const fileType = file.mimetype || "audio/mpeg";
-    
+
     // Create a File-like object that UploadThing can handle
     const uploadFile = new File([fileBuffer], fileName, { type: fileType });
     console.log("✅ Audio File object created:", {
       name: uploadFile.name,
       size: uploadFile.size,
-      type: uploadFile.type
+      type: uploadFile.type,
     });
 
     // Upload to UploadThing
     console.log("☁️ Uploading audio to UploadThing...");
     const uploadResult = await utapi.uploadFiles(uploadFile);
-    
-    console.log("📊 Audio upload result:", JSON.stringify(uploadResult, null, 2));
+
+    console.log(
+      "📊 Audio upload result:",
+      JSON.stringify(uploadResult, null, 2)
+    );
 
     // Check for errors
     if (uploadResult.error) {
@@ -94,7 +97,7 @@ export default async function handler(
       return res.status(500).json({
         error: "UploadThing audio upload failed",
         details: uploadResult.error,
-        message: uploadResult.error.message || "Unknown UploadThing error"
+        message: uploadResult.error.message || "Unknown UploadThing error",
       });
     }
 
@@ -102,7 +105,7 @@ export default async function handler(
       console.error("❌ No data returned from UploadThing for audio");
       return res.status(500).json({
         error: "No data returned",
-        message: "UploadThing returned no data for audio"
+        message: "UploadThing returned no data for audio",
       });
     }
 
@@ -129,21 +132,20 @@ export default async function handler(
       mimetype: file.mimetype,
       provider: "uploadthing",
       type: "audio",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     console.error("💥 Audio upload error:", error);
     console.error("📋 Audio error details:", {
       message: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : "No stack trace",
-      name: error instanceof Error ? error.name : "Unknown error type"
+      name: error instanceof Error ? error.name : "Unknown error type",
     });
 
     return res.status(500).json({
       error: "Audio upload failed",
       message: error instanceof Error ? error.message : "Unknown error",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }

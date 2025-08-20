@@ -1,12 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getConnection } from "../../../../framework/lib/db";
+// @ts-ignore
+import sql from "mssql";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const {
-    query: { id },
+    query: { albumId },
     method,
   } = req;
 
@@ -17,31 +19,35 @@ export default async function handler(
   try {
     const pool = await getConnection();
 
-    const result = await pool.request().input("AlbumId", id).query(`
-      SELECT 
-        a.id AS albumId,
-        a.title,
-        a.artist,
-        a.coverImageUrl,
-        a.releaseDate,
-        a.genre,
-        a.createdAt,
-        a.updatedAt,
+    // 👇 Ensure correct type (adjust if Albums.id is not INT)
+    const parsedAlbumId = parseInt(albumId as string, 10);
+    console.log("Fetching album with ID:", parsedAlbumId);
 
-        t.id AS trackId,
-        t.title AS trackTitle,
-        t.artist AS trackArtist,
-        t.albumId,
-        t.duration,
-        t.audioUrl,
-        t.coverImage AS trackCover,
-        t.createdAt AS trackCreatedAt,
-        t.updatedAt AS trackUpdatedAt
-      FROM [Iftekhari].[Albums] a
-      LEFT JOIN [Iftekhari].[Tracks] t ON a.id = t.albumId
-      WHERE a.id = @AlbumId
-      ORDER BY t.trackNumber
-    `);
+    const result = await pool.request().input("albumId", sql.Int, parsedAlbumId)
+      .query(`
+        SELECT 
+          a.id AS albumId,
+          a.title,
+          a.artist,
+          a.coverImageUrl,
+          a.releaseDate,
+          a.genre,
+          a.createdAt,
+          a.updatedAt,
+          t.id AS trackId,
+          t.title AS trackTitle,
+          t.artist AS trackArtist,
+          t.albumId,
+          t.duration,
+          t.audioUrl,
+          t.coverImage AS trackCover,
+          t.createdAt AS trackCreatedAt,
+          t.updatedAt AS trackUpdatedAt
+        FROM [Iftekhari].[Albums] a
+        LEFT JOIN [Iftekhari].[Tracks] t ON a.id = t.albumId
+        WHERE a.id = @albumId
+        ORDER BY t.trackNumber
+      `);
 
     if (result.recordset.length === 0) {
       return res.status(404).json({ message: "Album not found" });
